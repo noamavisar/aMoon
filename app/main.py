@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 
+from app.config import DATA_DIR
+
+
 app = FastAPI(
     title="Investment Intake Copilot",
     version="0.1.0",
@@ -11,6 +14,8 @@ async def health():
     return {
         "status": "ok",
         "service": "investment-intake-api",
+        "data_dir": str(DATA_DIR),
+        "data_dir_exists": DATA_DIR.exists(),
     }
 
 
