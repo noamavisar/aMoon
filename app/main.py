@@ -24,7 +24,7 @@ async def triage():
     return {
         "status": "stub",
         "message": "Triage endpoint is not implemented yet.",
-        "action": "review_manual",
+        "action": "process",
     }
 
 
