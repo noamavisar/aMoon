@@ -1,0 +1,97 @@
+1. Clear investment pitch — אמור להגיע ל־process
+From: terry.vanderkruyk@agilityhealth-demo.com
+To: investments@amoon-demo.com
+Subject: AgileRPM Series A — $12M Growth Round
+Attachment: AgileRPM - Investment Pitch Deck.pdf
+Body:
+Hi aMoon Investment Team,  
+I’m reaching out to introduce AgileRPM / Agility Health and share our Series A investment opportunity.  
+AgileRPM is an enterprise SaaS platform built for physical rehabilitation practice management. The platform supports clinical workflow, scheduling, documentation, compliance tracking, billing and operational analytics across rehabilitation clinics.  
+We are currently raising a $12 million Series A growth round and are seeking a $3 million investment from aMoon. The planned financing is structured as priced equity and is intended to provide approximately 24 months of funded runway.  
+Today, AgileRPM is deployed across 32 active clinics and has approximately $2.1 million in ARR. The broader Agility Health clinical network operates across more than 150 locations, giving us a built-in environment for continued product validation and expansion.  
+The attached investment deck includes additional information on our product, historical financial performance, market opportunity, competitive positioning, SaaS metrics, use of funds and growth strategy.  
+I would be happy to schedule a call with the team and answer any questions after your review.  
+Best,
+Terry
+Corporate Development
+Agility Health / AgileRPM
+
+EXPECTED RES:
+{
+  "category": "new_investment_pitch",
+  "confidence": "high",
+  "action": "process",
+  "review_needs": []
+}
+
+
+
+
+2. Service provider / newsletter — אמור להגיע ל־skip
+כאן דווקא לא כדאי להשתמש ב־AgileRPM. אחרת אנחנו מקשים על הבדיקה ללא צורך. המטרה היא לבדוק שהמערכת מבדילה בין הצעת השקעה לבין מייל עסקי רגיל.
+From: hello@healthtech-insights-demo.com
+To: investments@amoon-demo.com
+Subject: October Digital Health Market Update — New Reports & Events
+Attachments: none
+Body:
+Hi,  
+Here is the October edition of the HealthTech Insights newsletter.  
+This month we cover new trends in digital health, healthcare SaaS adoption, rehabilitation technology, and recent funding activity across the sector.  
+We have also published our latest market report and announced registration for our upcoming virtual healthcare innovation conference.  
+Featured this month:  
+- Digital health funding trends
+- Healthcare SaaS adoption benchmarks
+- Upcoming industry events
+- New reports available to subscribers
+You are receiving this email because you previously subscribed to HealthTech Insights.  
+Best,
+The HealthTech Insights Team  
+To unsubscribe or update your email preferences, use the subscription settings in your account.
+
+
+EXPECTED RES:
+{
+  "category": "newsletter",
+  "confidence": "high",
+  "action": "skip",
+  "review_needs": []
+}
+
+
+
+
+
+3. Ambiguous warm introduction — אמור להגיע ל־review_manual
+זה המייל שצריך להיות בכוונה עמום מאוד.
+הוא לא אומר "investment".
+הוא לא אומר "fundraising".
+הוא לא אומר "Series A".
+והוא גם לא אומר במפורש שזו פגישת מכירות.
+From: daniel.cohen@network-demo.com
+To: investments@amoon-demo.com
+Subject: Intro: Terry <> aMoon
+Attachments: none
+Body:
+Hi both,  
+As discussed, I wanted to connect you.  
+Terry is building something interesting in the physical rehabilitation space, and I thought it could be relevant for the aMoon team to get to know him.  
+Terry — the aMoon team has a lot of experience across healthcare and I think you’ll have plenty to discuss.  
+I’ll leave it to you from here.  
+Best,
+Daniel
+
+
+EXPECTED RES:
+{
+  "category": "uncertain",
+  "confidence": "medium",
+  "action": "review_manual",
+  "review_needs": [
+    "Confirm whether the introduction concerns a new investment opportunity."
+  ]
+}
+
+
+
+
+

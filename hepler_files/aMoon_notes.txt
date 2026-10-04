@@ -1,1 +1,8 @@
 http://localhost:5678/rest/oauth2-credential/callback
+
+
+Prepare PDF for API:
+3765490
+
+
+3765490
