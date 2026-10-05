@@ -97,3 +97,37 @@ Time spent:
 
 Next milestone:
 M3 — modular LLM classifier
+
+
+
+## M3 — Modular LLM classifier
+
+Status: complete
+
+Implemented:
+- PitchClassifier protocol
+- LlmPitchClassifier
+- Pydantic structured classification output
+- deterministic action routing
+- classifier provider factory
+- /triage connected to the real classifier
+- 12,000 character body limit and truncated_body flag
+- explicit failed state for classifier errors
+
+Tests:
+python -m pytest tests/test_classifier.py -v
+
+Live scenarios:
+- clear pitch -> process
+- newsletter/service provider -> skip
+- ambiguous introduction -> review_manual
+
+Blockers:
+None
+
+Next:
+M4 — PDF extraction and evidence validation
+
+
+Time spent:
+  2.5 Hours

@@ -1,10 +1,16 @@
+from app.classifiers.factory import create_pitch_classifier
 from fastapi import HTTPException, status, FastAPI
-from app.schemas import AnalyzeRequest
 from app.config import DATA_DIR
 from pathlib import Path
 import base64
 import binascii
 import os
+import logging
+from app.schemas import (
+    EmailEnvelope,
+    TriageResponse,
+    AnalyzeRequest
+)
 
 
 app = FastAPI(
@@ -12,6 +18,9 @@ app = FastAPI(
     version="0.1.0",
 )
 
+logger = logging.getLogger(__name__)
+
+classifier = create_pitch_classifier()
 
 @app.get("/health")
 async def health():
@@ -22,28 +31,43 @@ async def health():
         "data_dir_exists": DATA_DIR.exists(),
     }
 
+@app.post(
+    "/triage",
+    response_model=TriageResponse,
+)
+async def triage(
+    email: EmailEnvelope,
+) -> TriageResponse:
 
-@app.post("/triage")
-async def triage():
-    return {
-        "status": "stub",
-        "message": "Triage endpoint is not implemented yet.",
-        "action": "process",
-    }
+    try:
+        result = await classifier.classify(email)
 
+        return TriageResponse(
+            status="success",
+            action=result.action,
+            classification=result,
+            error_code=None,
+        )
 
-# @app.post("/opportunities/{opportunity_id}/analyze")
-# async def analyze_opportunity(opportunity_id: str):
+    except Exception:
+        logger.exception("classifier_failed")
+
+        return TriageResponse(
+            status="failed",
+            action=None,
+            classification=None,
+            error_code="classifier_failed",
+        )
+# @app.post("/triage")
+# async def triage():
 #     return {
 #         "status": "stub",
-#         "opportunity_id": opportunity_id,
-#         "message": "Analysis pipeline is not implemented yet.",
+#         "message": "Triage endpoint is not implemented yet.",
+#         "action": "process",
 #     }
 
 
 MAX_PDF_BYTES = 10 * 1024 * 1024
-
-
 @app.post(
     "/opportunities/{opportunity_id}/analyze",
     status_code=status.HTTP_202_ACCEPTED,

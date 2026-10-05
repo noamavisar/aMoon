@@ -18,10 +18,17 @@ Agility Health / AgileRPM
 
 EXPECTED RES:
 {
-  "category": "new_investment_pitch",
-  "confidence": "high",
+  "status": "success",
   "action": "process",
-  "review_needs": []
+  "classification": {
+    "category": "new_investment_pitch",
+    "confidence": "high",
+    "rationale": "The email explicitly presents a fundraising opportunity for a company.",
+    "review_needs": [],
+    "action": "process",
+    "truncated_body": false
+  },
+  "error_code": null
 }
 
 
@@ -51,12 +58,18 @@ To unsubscribe or update your email preferences, use the subscription settings i
 
 EXPECTED RES:
 {
-  "category": "newsletter",
-  "confidence": "high",
+  "status": "success",
   "action": "skip",
-  "review_needs": []
+  "classification": {
+    "category": "newsletter",
+    "confidence": "high",
+    "rationale": "The message is an informational newsletter rather than a company fundraising pitch.",
+    "review_needs": [],
+    "action": "skip",
+    "truncated_body": false
+  },
+  "error_code": null
 }
-
 
 
 
@@ -83,14 +96,20 @@ Daniel
 
 EXPECTED RES:
 {
-  "category": "uncertain",
-  "confidence": "medium",
+  "status": "success",
   "action": "review_manual",
-  "review_needs": [
-    "Confirm whether the introduction concerns a new investment opportunity."
-  ]
+  "classification": {
+    "category": "uncertain",
+    "confidence": "medium",
+    "rationale": "The email introduces two people but does not establish whether this is a new investment opportunity.",
+    "review_needs": [
+      "Confirm whether the introduction concerns a new investment opportunity."
+    ],
+    "action": "review_manual",
+    "truncated_body": false
+  },
+  "error_code": null
 }
-
 
 
 
