@@ -1,0 +1,7 @@
+AgileRPM demo fixtures for the lean M4 tutorial.
+agilerpm_text_reference.pdf: existing OOXML-to-text PDF transcript created in the prior M4 inspection.
+This is not a layout-preserving PowerPoint export. One source slide corresponds to one PDF page.
+agilerpm_image_only.pdf: copy of the original PDF reference from this project's sources.
+No synced project source was modified.
+agilerpm_image_only.pdf: 3765490 bytes; sha256=b08407bbee4baf27f3956791e9e5c77fd22dd0cd48c5158f27bdf8450c1b6fc1
+agilerpm_text_reference.pdf: 64085 bytes; sha256=e6e328d48c52e1cbacb077ebfb4ebb4b814f2c98bf958d9e226d6365272ffe9d

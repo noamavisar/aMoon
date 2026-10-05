@@ -1,0 +1,100 @@
+{
+  "status": "parsed",
+  "input_file": "fixtures\\m4\\agilerpm_text_reference.pdf",
+  "sha256": "e6e328d48c52e1cbacb077ebfb4ebb4b814f2c98bf958d9e226d6365272ffe9d",
+  "page_count": 21,
+  "pages": [
+    {
+      "page_number": 1,
+      "text": "AgileRPM text transcript | Source slide 1 | Layout not reproduced\n\nAgileRPM® / Agility Health\nInvestment Pitch Deck\nEnterprise SaaS Platform for Physical Rehabilitation Practice Management\nAGILITY HEALTH, INC. • TSX.V: AHI (DEMO)\nTarget Round\n$12.0M Series A\nTagline\n\"Serving Together. Better.\""
+    },
+    {
+      "page_number": 2,
+      "text": "AgileRPM text transcript | Source slide 2 | Layout not reproduced\n\nEXECUTIVE SUMMARY\nInvestment Thesis\nThe Opportunity\nDigitizing a $38.5B Fragmented Physical Rehabilitation Market burdened by manual administrative workflows, billing inefficiencies, and therapist\nburnout.\nProven Clinical Origin\nDeveloped and battle-tested within Agility Health's nationwide network of 155+ rehabilitation clinics and 1.0M+ annual patient visits.\nProprietary SaaS & Traction\nDeployed in 32 clinics with $2.1M ARR, demonstrating a 28% reduction in admin time per therapist and an 18% decrease in claim denials.\nInvestment Ask\n$3.0M USD lead check as part of a $12.0M Series A round to scale sales and deploy AI auto-coding."
+    },
+    {
+      "page_number": 3,
+      "text": "AgileRPM text transcript | Source slide 3 | Layout not reproduced\n\nCOMPANY OVERVIEW\nDual-Engine Operating Structure\nCorporate Mission: Unifying physical therapy clinical excellence with enterprise software automation to maximize therapist productivity and clinic\nprofitability.\nCore Activity: PT clinic operation & contract therapy.\nLocations: 155+ service sites across 22 U.S. states.\nVolume: 1,000,000+ patient visits annually.\nTeam Size: 700+ total employees (PTs, OTs, admin).\nRevenue Model: Service fee per visit & long-term care contracts.\nCore Activity: Cloud practice management & EHR SaaS.\nLocations: 32 operational clinical sites.\nVolume: 720 active daily clinical users.\nTeam Size: 18 dedicated software engineers & support.\nRevenue Model: Per-user monthly sub + % RCM.\nClinical Division\nAgility Health\nSoftware Division\nAgileRPM"
+    },
+    {
+      "page_number": 4,
+      "text": "AgileRPM text transcript | Source slide 4 | Layout not reproduced\n\nManagement & Leadership Team\n100+ Combined Years of Healthcare Operations & Finance Experience\nSteve Davidson, PT, MBA\nChief Executive Officer\nGene K. Miyamoto, MHSA\nChief Operating Officer\nKen Scholten, PT\nPresident\nTerry Vanderkruyk\nChief Corp Dev Officer\n• 29+ years healthcare operational experience\n• Licensed Physical Therapist\n• Led acquisition & integration of 40+ clinics\n• 30+ years health services administration\n• Hospital contract management veteran\n• Former executive for multi-site networks\n• 35+ years in physical therapy management\n• Clinical workflow design expert\n• Architect of AgileRPM protocols\n• 30+ years public & private healthcare M&A\n• Life sciences corporate finance leadership\n• Supervisor of capital raising"
+    },
+    {
+      "page_number": 5,
+      "text": "AgileRPM text transcript | Source slide 5 | Layout not reproduced\n\nBusiness Units & Clinical Footprint\nDiverse Operational Revenue Streams\n40%\nOutpatient Clinics\n38%\nLong-Term Care\n17%\nHospital Contracts\n5%\nIndustrial Health\nLow Government Payor Risk\nMedicare and Medicaid represent only ~10% of direct receivables across clinical divisions.\nCommercial Diversity\nStrong enterprise relationships across automotive, manufacturing, and hospital sectors driving steady recurring volume."
+    },
+    {
+      "page_number": 6,
+      "text": "AgileRPM text transcript | Source slide 6 | Layout not reproduced\n\nEnterprise Customer Validation\nAgility Health and AgileRPM provide contracted services and software to premier commercial enterprises:\nClinical Endorsement: 94% Retention Rate\nAmong contracted enterprise clinic partners over trailing 3-year period (2022-2025).\nINDUSTRIAL & CORPORATE FORTUNE 500\nHEALTHCARE SYSTEMS\nJohn Deere\nAlcoa\nFord Motor Co.\nContinental Tire\nAmway\nAmerican Airlines\nUnited Tech\nPratt & Whitney\nTrinity Health\nAmica Mutual Insurance\nWTA"
+    },
+    {
+      "page_number": 7,
+      "text": "AgileRPM text transcript | Source slide 7 | Layout not reproduced\n\nYear\nRevenue ($ USD)\nYoY Growth\nPrimary Revenue Driver\n2020\n$46.8M\n-\nOutpatient clinic expansion\n2021\n$52.1M\n+11.3%\nHospital contract therapy wins\n2022\n$55.3M\n+6.1%\nRegional M&A clinic consolidation\n2023\n$60.2M\n+8.9%\nIndustrial health contract additions\n2024\n$63.0M\n+4.6%\nInitial AgileRPM SaaS rollouts\n2025 (Run Rate)\n$65.5M\n+4.0%\nSaaS recurring revenue expansion\nHistorical Financial Performance\nStable revenue floor from core PT services while scaling the software division.\nAdjusted EBITDA Growth\n$0.8M\n2020\n$1.7M\n2021\n$2.6M\n2022\n$2.9M\n2023\n$3.2M\n2024\n$3.4M\n2025"
+    },
+    {
+      "page_number": 8,
+      "text": "AgileRPM text transcript | Source slide 8 | Layout not reproduced\n\nProduct Deep Dive: AgileRPM Software Suite\nEnterprise Software Tailored for Physical Rehabilitation\nCore Functionality\nIntegrated cloud EHR, patient scheduling, automated documentation, compliance tracking, work queues, billing, and patient outcome analytics.\nIntended Use\nAdministrative practice management. Non-device software: Does not diagnose, treat, or provide automated clinical treatment decisions.\nProduct Stage\nCommercialized. Version 3.2 is currently active across 32 clinics and 720 daily active clinicians.\nKey Innovation\nProprietary data layer of 1M+ clinical treatment logs used to generate workflow optimizations and reduce claim denials."
+    },
+    {
+      "page_number": 9,
+      "text": "AgileRPM text transcript | Source slide 9 | Layout not reproduced\n\nFinancing Round\nSeries A Growth Round\nTotal Round Target\n$12,000,000 USD\nRequested Fund Check\n$3,000,000 USD\nInstrument\nPriced Equity (Preferred Shares)\nEquity Offered\n20.0% (Round) / 5.0% (Fund)\nHistorical R&D Raised\n$3,500,000 USD\nExisting Investors\nHealthTech Ventures, BlueSky Capital, Founders\nInvestment Opportunity & Deal Structure\nSeries A Equity Terms & Capital Allocation\nTarget Funded Runway: 24 Months\nUse of Funds Breakdown\nProduct & AI R&D (35%)\n$4.2M\nSales & Marketing (30%)\n$3.6M\nCustomer Success (20%)\n$2.4M\nRegulatory & Cyber (15%)\n$1.8M"
+    },
+    {
+      "page_number": 10,
+      "text": "AgileRPM text transcript | Source slide 10 | Layout not reproduced\n\nTarget Market & Customer Segmentation\n$38.5B (6.2% CAGR)\n$2.8B\n$350M\nU.S. PHYSICAL THERAPY TAM (2025)\nTotal Addressable Market\nREHAB PRACTICE MANAGEMENT SAM\nServiceable Addressable Market (32,000+ U.S. PT Clinics)\nAGILERPM SOM TARGET\nServiceable Obtainable Market (Outpatient Chains 10-100 Locations & Hospitals)"
+    },
+    {
+      "page_number": 11,
+      "text": "AgileRPM text transcript | Source slide 11 | Layout not reproduced\n\nMarket Dynamics & Macro Growth Drivers\nMacro Drivers Accelerating Software Adoption\n2.4% annual increase in U.S. residents aged 50+, expanding demand for outpatient orthopedics and mobility restoration.\nPhysical therapists spend up to 35% of daily working hours on manual billing and paper documentation.\nHealth plans actively redirecting care from expensive hospital inpatient settings to independent outpatient centers.\nTop 8 PT chains control only 11.3% of the U.S. market; 88%+ of clinics are independent or small regional chains needing modern software.\nAging Demographics\nTherapist Burnout\nOutpatient Care Migration\nHighly Fragmented Market"
+    },
+    {
+      "page_number": 12,
+      "text": "AgileRPM text transcript | Source slide 12 | Layout not reproduced\n\nFeature/Metric\nAgileRPM\nWebPT\nRaintree Systems\nNet Health\nTarget Focus\nOutpatient & Hospital PT\nSmall Independent PTs\nEnterprise Rehab Chains\nHospital / Wound Care\nDeployment\nModern Cloud SaaS\nLegacy Web / Cloud\nOn-Premise / Hosted\nHybrid Cloud\nClinic-Tested Origin\nYes (155+ active sites)\nNo (Pure Software)\nNo (Pure Software)\nNo (Pure Software)\nIntegrated Billing (RCM)\nNative Automated RCM\nThird-Party Add-on\nComplex Setup\nEnterprise Add-on\nTherapist Admin Savings\n28% Average Reduction\n~12% Reduction\n~15% Reduction\n~10% Reduction\nPricing Model\n$299/provider/mo + RCM %\n$349/provider/mo\nCustom Enterprise\nHigh Upfront + License\nCompetitive Landscape & Differentiation\n1. Built by PTs: Eliminates redundant clinical clicks.\n2. End-to-End: Unifies scheduling, EMR & billing.\n3. Data Engine: Benchmarks outcomes vs duration."
+    },
+    {
+      "page_number": 13,
+      "text": "AgileRPM text transcript | Source slide 13 | Layout not reproduced\n\nCommercial Traction & SaaS Unit Economics\nTrailing 12 Months Metrics (2024-2025)\n$2.1M\nARR\n32\nActive Clinics\n16.2x\nLTV/CAC\n114%\nNet Rev Retention\nDaily Active Clinicians\n720 Users\nARPU (per provider)\n$291/month\nCAC (per clinic)\n$4,200 USD\nLTV (per clinic)\n$68,000 USD"
+    },
+    {
+      "page_number": 14,
+      "text": "AgileRPM text transcript | Source slide 14 | Layout not reproduced\n\nGrowth Strategy: Three-Pillar Roadmap\nPILLAR 1\nInternal Network Rollout\nExpand AgileRPM from 32 to all 155+ Agility Health internal clinical locations, establishing an immediate software baseline.\nPILLAR 2\nDirect Enterprise SaaS Sales\nDeploy dedicated sales team targeting 300+ regional outpatient clinic networks (10-100 locations) across the U.S.\nPILLAR 3\nStrategic M&A Consolidation\nAcquire small regional chains with positive clinic cash flow & immediately deploy AgileRPM to lift operating margin."
+    },
+    {
+      "page_number": 15,
+      "text": "AgileRPM text transcript | Source slide 15 | Layout not reproduced\n\nOperational Evidence & Outcome Studies\n12-Month Operational Pilot Study (n=32 active clinic sites): Statistically significant operational and financial efficiency gains demonstrated after\nimplementing AgileRPM software.\n-28%\nAdmin Documentation Time\nSaves ~1.2 hrs per therapist daily\n-18%\nInitial Claim Denial Rate\nCompared to legacy systems\n36 Days\nDays in A/R\nReduced from 48 days (-12d)\n99.4%\nAudit Compliance Score\nMedicare chart documentation"
+    },
+    {
+      "page_number": 16,
+      "text": "AgileRPM text transcript | Source slide 16 | Layout not reproduced\n\nRegulatory & Compliance Positioning\nFDA Regulatory Classification\nExempt/Non-Device Medical Software. Performs practice management, EHR recordkeeping, scheduling, and billing. Does not perform medical\ndiagnosis, clinical decision automation, or treatment recommendations.\nHIPAA Compliant & Data\nFully compliant with U.S. HIPAA privacy and security regulations. AES-256 at rest; TLS 1.3 in transit for all Protected Health Information (PHI).\nSOC 2 Type II\nCertified for cloud security, availability, and confidentiality.\nFuture AI Automation\nEvaluating required regulation (e.g., 510k) for the upcoming AI-based auto-coding model launch."
+    },
+    {
+      "page_number": 17,
+      "text": "AgileRPM text transcript | Source slide 17 | Layout not reproduced\n\nAcquisition Criteria & M&A Synergies\nDisciplined M&A Strategy for Clinical Footprint\n1\nCultural Fit\nCommitment to clinical quality and high therapist retention.\n2\nManagement Participation\nOngoing participation and equity retention of local clinical founders.\n3\nStrong Local Reputation\nEstablished local brand equity in regional healthcare markets.\n4\nImmediate Software Synergy\nPost-acquisition migration to AgileRPM yields instant 15-20% admin cost reduction through centralized RCM."
+    },
+    {
+      "page_number": 18,
+      "text": "AgileRPM text transcript | Source slide 18 | Layout not reproduced\n\nCompany Name\nTicker\nOutpatient PT\nLong-Term Care\nIndustrial Rehab\nProprietary SaaS EHR\nAgility Health / AgileRPM\nTSX.V: AHI\nYES\nYES\nYES\nYES (AgileRPM)\nSelect Medical\nNYSE: SEM\nYES\nYES\nNO\nNO (Third-party)\nKindred Healthcare\nNYSE: KND\nNO\nYES\nNO\nNO (Third-party)\nUS Physical Therapy\nNASDAQ: USPH\nYES\nNO\nYES\nNO (Third-party)\nPublic Peer Comparison\nValuation Advantage\nPublic peers trade at 11x-14x EBITDA; AgileRPM's high-margin SaaS growth unlocks enterprise software revenue multiples for the group."
+    },
+    {
+      "page_number": 19,
+      "text": "AgileRPM text transcript | Source slide 19 | Layout not reproduced\n\nRisk Analysis & Mitigation Strategies\nCATEGORY\nCommercial\nIDENTIFIED RISK (MEDIUM)\nSales cycle length in hospital chains (12-18 mos).\nMITIGATION\nTarget independent 10-50 clinic PT chains with 60-day decision cycles.\nCATEGORY\nExecution\nIDENTIFIED RISK (HIGH)\nEHR interoperability with hospital systems (Epic/Cerner).\nMITIGATION\nBuild pre-certified HL7 / FHIR API connectors using investment proceeds.\nCATEGORY\nRegulatory / Security\nIDENTIFIED RISK (HIGH)\nProtected Health Information (PHI) cybersecurity breach.\nMITIGATION\nSOC 2 Type II compliance, $10M cyber liability insurance, quarterly pen tests.\nCATEGORY\nFinancing\nIDENTIFIED RISK (MEDIUM)\nWorking capital during rapid SaaS expansion.\nMITIGATION\nMaintain 24-month cash runway; profitable core clinical division safety net."
+    },
+    {
+      "page_number": 20,
+      "text": "AgileRPM text transcript | Source slide 20 | Layout not reproduced\n\nStrategic Milestones & 18-Month Roadmap\nQ1 2025\nClose Series A Funding\n$12.0M Total / $3.0M Lead Check secured.\nQ3 2025\nScale Active Clinics\nExpand from 32 to 75 operational clinics ($4.5M ARR).\nQ1 2026\nEnterprise Connectors\nComplete HL7/FHIR connectors for Epic & Cerner.\nQ4 2026\n150+ Clinics & AI Launch\nReach $12.5M ARR & launch AI Auto-Coding Module."
+    },
+    {
+      "page_number": 21,
+      "text": "AgileRPM text transcript | Source slide 21 | Layout not reproduced\n\nInvestment Highlights\n1\n2\n3\n4\n5\nBoard of Directors\nPRIMARY DEAL CONTACT\nTerry Vanderkruyk\nChief Corporate Development Officer\nTerry@AgilityHealth.com\n+1 (604) 961-3844\nInvestor Relations: Grand Rapids, Michigan, USA\nwww.AgilityHealth.com / www.AgileRPM.com\nLarge & Growing Market: $38.5B physical therapy industry benefiting from aging demographics and outpatient migration.\nProven Product-Market Fit: $2.1M ARR across 32 clinics with 28% therapist productivity gains.\nAttractive Deal Terms: $3.0M fund check for 5.0% equity with 24 months runway.\nLow Regulatory Risk: Exempt operational health software (non-device), avoiding lengthy FDA 510(k) cycles.\nExperienced Leadership: Management team with 100+ combined years in PT operations & corporate finance.\nRobert Herr - Director & Audit Chair (CPA, former Crowe Horwath LLP)\nPierre Labbé - Independent Director (Former CFO of Medicago)\nRobert Metcalfe - Independent Director (Former Senior Partner Lang Michener LLP)"
+    }
+  ],
+  "warnings": [],
+  "fixture_checks": {
+    "21_pages": true,
+    "round_target_on_page_9": true,
+    "fund_check_on_page_9": true,
+    "invented_amount_rejected": true,
+    "wrong_page_rejected": true
+  }
+}

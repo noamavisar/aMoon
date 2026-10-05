@@ -131,3 +131,50 @@ M4 — PDF extraction and evidence validation
 
 Time spent:
   2.5 Hours
+
+
+
+  ## M4 — Lean PDF Parsing and Quote Validation
+
+Status: completed locally
+
+### Implemented
+- Added `app/m4_pdf.py` for PDF text extraction and quote validation.
+- Added `scripts/inspect_m4_pdf.py` for local PDF inspection.
+- Added `tests/test_m4_pdf.py` with 16 automated tests.
+- Preserved PDF page numbering, including empty pages.
+- Added extraction warnings and explicit rejection of unsupported PDFs.
+- Added literal quote checks for PDF pages and email text.
+
+### Verification
+- All 16 tests passed with no skipped tests.
+- Positive fixture: `fixtures/m4/agilerpm_text_reference.pdf`.
+- Extracted 21 pages.
+- Confirmed the $12,000,000 round target and $3,000,000 requested fund check on page 9.
+- Rejected an invented amount and a quote attributed to the wrong page.
+- Manually compared pages 1 and 9 against the PDF.
+- Negative fixture: `fixtures/m4/agilerpm_image_only.pdf`.
+- Negative fixture stopped with `pdf_no_usable_text`.
+
+### Scope and Limitations
+- The positive fixture is a text transcript of the source slides, not a layout-preserving export.
+- Quote matching confirms presence in the source, not the truth of company claims.
+- OCR and interpretation of charts or images are outside the demo scope.
+- API and n8n integration of the parser remain pending.
+- The investment brief is not implemented yet.
+
+### Environment
+- Python version: 3.12
+- PyMuPDF version: 1.28.2
+- Positive fixture SHA-256: [value from the successful inspection]
+- Known blockers: None
+
+Time spent:
+  30 Minutes
+
+  
+### Next Milestone
+M5 — implement one LLM analyst that receives the email body and
+page-numbered deck text, returns a structured screening brief,
+and preserves sources, missing information and contradictions.
+
