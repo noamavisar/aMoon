@@ -223,3 +223,56 @@ preserve the email context, and generate the readable text brief.
 
 
 
+
+
+## M6 — Lean Gmail-to-Brief Integration
+
+Status: completed
+
+### Implemented
+- Connected the existing analyze endpoint to M4 PDF extraction
+  and one M5 investment screening analyst.
+- Preserved text_body and review_manual.
+- Preserved the m2_<message_id> opportunity identifier.
+- Saved the full email envelope and classification during triage.
+- Added email context to the n8n analysis request.
+- Added deterministic English brief.txt rendering.
+- Saved record.json and brief.txt under:
+  data/m2_received/<opportunity_id>/
+- Kept source quotes, PDF page numbers, missing information,
+  contradictions, extraction warnings and processing notes.
+- Added atomic record writes and basic duplicate protection.
+- Closed skip, review_manual, attachment-failure and fallback routes.
+- Removed the sendAndWait dependency from the lean demo path.
+
+### Verification
+- M4, M5 and M6 automated tests passed: 29 tests.
+- Live Gmail pitch with one text-layer PDF produced a saved brief.
+- Opened brief.txt from the host computer.
+- Manually checked central facts against the email and PDF.
+- Confirmed separate round target and requested fund check.
+- Confirmed missing pre-money valuation remained missing.
+- Repeated the same analysis request without another analyst run.
+- Newsletter and ambiguous introduction left saved outcomes.
+- Missing PDF, multiple PDFs and image-only PDF stopped clearly.
+- Conflicting fund-check amounts were retained with both sources.
+- Workflow fallback produced an explicit saved failure.
+
+### Decisions and Limitations
+- Analysis is synchronous and returns HTTP 200 with an explicit status.
+- The previous HTTP 202 endpoint was a transport stub,
+  not an implemented background analysis job.
+- The API runs as one process for this demo.
+- There is no durable queue or automatic recovery/retry after failure.
+- Sources are the supplied email and PDF only.
+- External verification is not performed.
+- Source matching does not establish the truth of company claims.
+- The demo produces material for human review,
+  without an investment score or automated rejection.
+- OCR, runtime PPTX support, web research, multiple specialists,
+  an additional synthesizer and a dashboard remain out of scope.
+
+### Run Details
+- Actual time spent: 1:20 hour
+- Known blockers: None
+
