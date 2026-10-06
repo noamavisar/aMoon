@@ -179,7 +179,7 @@ def render_brief(record):
             return
 
         source = (
-            f"PDF page {item['page']}"
+            f"Deck slide {item['page']}"
             if item["source"] == "deck"
             else "Email body"
         )
@@ -195,7 +195,7 @@ def render_brief(record):
     for key, label in [
         ("company_name", "Company"),
         ("product", "Product"),
-        ("target_customer", "Target customer"),
+        ("target_customer", "Target segment claimed"),
     ]:
         fact(label, brief[key])
 
@@ -216,8 +216,23 @@ def render_brief(record):
         "total capital raised to date."
     )
 
+    heading("REPORTED TRACTION")
+
+    for i, item in enumerate(
+        brief["traction"],
+        1,
+    ):
+        fact(
+            f"{i}. {item['label']}",
+            item,
+        )
+
+    if not brief["traction"]:
+        lines.append(
+            "Not provided in the validated output."
+        )
+
     for key, title in [
-        ("traction", "REPORTED TRACTION"),
         (
             "market_claims",
             "COMPANY MARKET CLAIMS — NOT EXTERNALLY VERIFIED",
@@ -229,11 +244,16 @@ def render_brief(record):
     ]:
         heading(title)
 
-        for i, item in enumerate(brief[key], 1):
+        for i, item in enumerate(
+            brief[key],
+            1,
+        ):
             fact(str(i), item)
 
         if not brief[key]:
-            lines.append("Not provided in the validated output.")
+            lines.append(
+                "Not provided in the validated output."
+            )
 
     for key, title in [
         (

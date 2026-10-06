@@ -82,7 +82,7 @@ def parse_pdf(pdf_bytes: bytes) -> ParsedPdf:
                 text = document[index].get_text("text", sort=True).strip()
             except RuntimeError as exc:
                 raise PdfParsingError(
-                    "pdf_extraction_failed", f"Cannot read PDF page {page_number}."
+                    "pptx_extraction_failed", f"Cannot read Deck slide {page_number}." # pptx was pdf
                 ) from exc
 
             pages.append(PdfPage(page_number=page_number, text=text))

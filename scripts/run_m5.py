@@ -76,7 +76,7 @@ async def main() -> None:
         )
 
         print(
-            f"Reading {parsed.page_count} PDF pages. "
+            f"Reading {parsed.page_count} Deck slides. "
             "Calling the analyst..."
         )
 
