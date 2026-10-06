@@ -1,8 +1,11 @@
 import asyncio
 import json
-from typing import Literal
+
 from pathlib import Path
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict
+
 from app.deck_extractor import ParsedDeck
 
 from app.m4_pdf import (
@@ -11,6 +14,7 @@ from app.m4_pdf import (
     verify_deck_quote,
     verify_email_quote,
 )
+
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -74,6 +78,7 @@ FACT_FIELDS = (
     "use_of_funds",
 )
 
+
 FACT_LISTS = (
     "traction",
     "market_claims",
@@ -95,33 +100,42 @@ def validate_brief(
         items = getattr(brief, name)
 
         if len(items) > 3:
-            raise ValueError(f"{name}: maximum 3 facts")
+            raise ValueError(
+                f"{name}: maximum 3 facts"
+            )
 
         facts.extend(
             (f"{name}[{i}]", fact)
             for i, fact in enumerate(items)
         )
 
-    for i, conflict in enumerate(brief.contradictions):
+    for i, conflict in enumerate(
+        brief.contradictions
+    ):
         if (
             conflict.first.value is None
             or conflict.second.value is None
         ):
             raise ValueError(
-                "A contradiction needs two explicit source claims"
+                "A contradiction needs two explicit "
+                "source claims"
             )
 
-        facts.extend([
-            (
-                f"contradictions[{i}].first",
-                conflict.first,
-            ),
-            (
-                f"contradictions[{i}].second",
-                conflict.second,
-            ),
-        ])
-    # Recover missing company-name evidence only from an exact source match.
+        facts.extend(
+            [
+                (
+                    f"contradictions[{i}].first",
+                    conflict.first,
+                ),
+                (
+                    f"contradictions[{i}].second",
+                    conflict.second,
+                ),
+            ]
+        )
+
+    # Recover missing company-name evidence only
+    # from an exact source match.
     company = brief.company_name
 
     if (
@@ -132,13 +146,18 @@ def validate_brief(
             or not company.quote.strip()
         )
     ):
-        company_name = normalize_whitespace(company.value)
+        company_name = normalize_whitespace(
+            company.value
+        )
 
-        if company_name in normalize_whitespace(email_body):
+        if company_name in normalize_whitespace(
+            email_body
+        ):
             company.value = company_name
             company.source = "email"
             company.page = None
             company.quote = company_name
+
         else:
             for deck_page in parsed.pages:
                 if company_name in normalize_whitespace(
@@ -146,10 +165,20 @@ def validate_brief(
                 ):
                     company.value = company_name
                     company.source = "deck"
-                    company.page = deck_page.page_number
+
+                    # The schema field is still named
+                    # "page" for backward compatibility.
+                    # For deck evidence it represents
+                    # the source slide number.
+                    company.page = (
+                        deck_page.page_number
+                    )
+
                     company.quote = company_name
                     break
-        # Keep an unsupported company name out of the validated report.
+
+    # Keep an unsupported company name out of the
+    # validated report.
     company = brief.company_name
 
     if company.value is not None and (
@@ -163,38 +192,54 @@ def validate_brief(
         company.quote = None
 
         missing_name_note = (
-            "The company name could not be extracted with supporting "
-            "source evidence; confirm it manually."
+            "The company name could not be "
+            "extracted with supporting source "
+            "evidence; confirm it manually."
         )
 
-        if missing_name_note not in brief.critical_unknowns:
+        if (
+            missing_name_note
+            not in brief.critical_unknowns
+        ):
             if len(brief.critical_unknowns) < 5:
-                brief.critical_unknowns.append(missing_name_note)
+                brief.critical_unknowns.append(
+                    missing_name_note
+                )
             else:
-                brief.critical_unknowns[-1] = missing_name_note
+                brief.critical_unknowns[-1] = (
+                    missing_name_note
+                )
 
-        # Remove conclusions that rely on the unsupported name.
+        # Remove conclusions that rely on the
+        # unsupported name.
         brief.positive_signals = [
             item
             for item in brief.positive_signals
-            if "company_name" not in item.supporting_fields
+            if "company_name"
+            not in item.supporting_fields
         ]
 
         brief.risks = [
             item
             for item in brief.risks
-            if "company_name" not in item.supporting_fields
+            if "company_name"
+            not in item.supporting_fields
         ]
-                
+
     for name, fact in facts:
         if fact.value is None:
             if (
                 fact.source,
                 fact.page,
                 fact.quote,
-            ) != ("unknown", None, None):
+            ) != (
+                "unknown",
+                None,
+                None,
+            ):
                 raise ValueError(
-                    f"{name}: missing values must have no evidence"
+                    f"{name}: missing values "
+                    "must have no evidence"
                 )
 
             continue
@@ -205,7 +250,8 @@ def validate_brief(
             or not fact.quote.strip()
         ):
             raise ValueError(
-                f"{name}: a value needs a nonempty quote"
+                f"{name}: a value needs "
+                "a nonempty quote"
             )
 
         if fact.source == "deck":
@@ -214,41 +260,62 @@ def validate_brief(
                 fact.page,
                 fact.quote,
             )
-        elif fact.source == "email" and fact.page is None:
+
+        elif (
+            fact.source == "email"
+            and fact.page is None
+        ):
             matched = verify_email_quote(
                 email_body,
                 fact.quote,
             )
+
         else:
             matched = False
 
         if not matched:
             raise ValueError(
-                f"{name}: quote not found in its stated source"
+                f"{name}: quote not found "
+                "in its stated source"
             )
 
         if (
             normalize_whitespace(fact.value)
-            not in normalize_whitespace(fact.quote)
+            not in normalize_whitespace(
+                fact.quote
+            )
         ):
             if name in {
                 "product",
                 "target_customer",
                 "use_of_funds",
             }:
-                fact.value = normalize_whitespace(fact.quote)
+                fact.value = normalize_whitespace(
+                    fact.quote
+                )
             else:
                 raise ValueError(
-                    f"{name}: value must appear literally inside its quote"
+                    f"{name}: value must appear "
+                    "literally inside its quote"
                 )
 
-    allowed = set(FACT_FIELDS + FACT_LISTS)
+    allowed = set(
+        FACT_FIELDS + FACT_LISTS
+    )
 
-    for name in ("positive_signals", "risks"):
-        items = getattr(brief, name)
+    for name in (
+        "positive_signals",
+        "risks",
+    ):
+        items = getattr(
+            brief,
+            name,
+        )
 
         if len(items) > 3:
-            raise ValueError(f"{name}: maximum 3 items")
+            raise ValueError(
+                f"{name}: maximum 3 items"
+            )
 
         for item in items:
             if (
@@ -256,22 +323,33 @@ def validate_brief(
                 or not item.supporting_fields
             ):
                 raise ValueError(
-                    f"{name}: each inference needs text and field references"
+                    f"{name}: each inference "
+                    "needs text and field references"
                 )
 
             if any(
                 field not in allowed
-                for field in item.supporting_fields
+                for field
+                in item.supporting_fields
             ):
                 raise ValueError(
-                    f"{name}: unknown supporting field"
+                    f"{name}: unknown "
+                    "supporting field"
                 )
 
     if len(brief.critical_unknowns) > 5:
-        raise ValueError("Maximum 5 critical unknowns")
+        raise ValueError(
+            "Maximum 5 critical unknowns"
+        )
 
-    if not 1 <= len(brief.founder_questions) <= 5:
-        raise ValueError("Expected 1 to 5 founder questions")
+    if not (
+        1
+        <= len(brief.founder_questions)
+        <= 5
+    ):
+        raise ValueError(
+            "Expected 1 to 5 founder questions"
+        )
 
 
 ANALYST_INSTRUCTIONS = """
@@ -346,6 +424,7 @@ Keep the briefing concise:
 use short facts and one sentence per inference.
 """
 
+
 async def analyze_email_and_deck(
     email: dict,
     parsed: ParsedDeck,
@@ -354,19 +433,30 @@ async def analyze_email_and_deck(
 ) -> ScreeningBrief:
     from agents import Agent, Runner
 
-    email_body = email.get("text_body", "")
+    email_body = email.get(
+        "text_body",
+        "",
+    )
 
-    if not isinstance(email_body, str):
+    if not isinstance(
+        email_body,
+        str,
+    ):
         raise ValueError(
             "email.text_body must be a string"
         )
 
     payload = {
         "email": {
-            "subject": email.get("subject", ""),
+            "subject": email.get(
+                "subject",
+                "",
+            ),
             "text_body": email_body,
         },
-        "deck_text": format_pages_for_llm(parsed),
+        "deck_text": format_pages_for_llm(
+            parsed
+        ),
         "extraction_warnings": [
             warning.message
             for warning in parsed.warnings
@@ -374,7 +464,10 @@ async def analyze_email_and_deck(
     }
 
     agent = Agent(
-        name="Lean Investment Screening Analyst",
+        name=(
+            "Lean Investment "
+            "Screening Analyst"
+        ),
         instructions=ANALYST_INSTRUCTIONS,
         model=model,
         output_type=ScreeningBrief,
@@ -383,7 +476,10 @@ async def analyze_email_and_deck(
     result = await asyncio.wait_for(
         Runner.run(
             agent,
-            json.dumps(payload, ensure_ascii=False),
+            json.dumps(
+                payload,
+                ensure_ascii=False,
+            ),
             max_turns=1,
         ),
         timeout=120,
@@ -391,15 +487,27 @@ async def analyze_email_and_deck(
 
     brief = result.final_output
 
-    if not isinstance(brief, ScreeningBrief):
+    if not isinstance(
+        brief,
+        ScreeningBrief,
+    ):
         raise TypeError(
-            "The analyst did not return ScreeningBrief"
+            "The analyst did not return "
+            "ScreeningBrief"
         )
 
     from app.m5_cleanup import prepare_brief
 
-    output_dir = Path(output_dir) if output_dir is not None else Path("work/m5")
-    output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = (
+        Path(output_dir)
+        if output_dir is not None
+        else Path("work/m5")
+    )
+
+    output_dir.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     # Save before cleanup or validation can fail.
     raw_response = {
@@ -407,10 +515,14 @@ async def analyze_email_and_deck(
         "model": model,
         "email": email,
         "parsed": parsed.to_dict(),
-        "brief": brief.model_dump(mode="json"),
+        "brief": brief.model_dump(
+            mode="json"
+        ),
     }
 
-    (output_dir / "raw_response.json").write_text(
+    (
+        output_dir / "raw_response.json"
+    ).write_text(
         json.dumps(
             raw_response,
             ensure_ascii=False,
@@ -425,9 +537,13 @@ async def analyze_email_and_deck(
         parsed,
     )
 
-    (output_dir / "cleanup.json").write_text(
+    (
+        output_dir / "cleanup.json"
+    ).write_text(
         json.dumps(
-            {"notes": notes},
+            {
+                "notes": notes,
+            },
             ensure_ascii=False,
             indent=2,
         ),
