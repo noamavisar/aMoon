@@ -1,0 +1,185 @@
+{
+  "status": "validated",
+  "model": "gpt-6-luna",
+  "pdf_sha256": "e6e328d48c52e1cbacb077ebfb4ebb4b814f2c98bf958d9e226d6365272ffe9d",
+  "external_verification": "not_performed",
+  "processing_notes": [
+    "use_of_funds: replaced the model value with the verified quote."
+  ],
+  "warnings": [],
+  "brief": {
+    "company_name": {
+      "value": "AgileRPM",
+      "source": "email",
+      "page": null,
+      "quote": "AgileRPM"
+    },
+    "product": {
+      "value": "Enterprise SaaS Platform for Physical Rehabilitation Practice Management",
+      "source": "deck",
+      "page": 1,
+      "quote": "Enterprise SaaS Platform for Physical Rehabilitation Practice Management"
+    },
+    "target_customer": {
+      "value": "Outpatient Chains 10-100 Locations & Hospitals",
+      "source": "deck",
+      "page": 10,
+      "quote": "AGILERPM SOM TARGET Serviceable Obtainable Market (Outpatient Chains 10-100 Locations & Hospitals)"
+    },
+    "funding_round": {
+      "value": "Series A",
+      "source": "email",
+      "page": null,
+      "quote": "We are raising a $12,000,000 USD Series A round"
+    },
+    "round_target": {
+      "value": "$12,000,000 USD",
+      "source": "email",
+      "page": null,
+      "quote": "We are raising a $12,000,000 USD Series A round"
+    },
+    "requested_fund_check": {
+      "value": "$3,000,000 USD",
+      "source": "email",
+      "page": null,
+      "quote": "requesting $3,000,000 USD from your fund"
+    },
+    "amount_raised_to_date": {
+      "value": "$3,500,000 USD",
+      "source": "deck",
+      "page": 9,
+      "quote": "Historical R&D Raised $3,500,000 USD"
+    },
+    "pre_money": {
+      "value": null,
+      "source": "unknown",
+      "page": null,
+      "quote": null
+    },
+    "use_of_funds": {
+      "value": "Use of Funds Breakdown Product & AI R&D (35%) $4.2M Sales & Marketing (30%) $3.6M Customer Success (20%) $2.4M Regulatory & Cyber (15%) $1.8M",
+      "source": "deck",
+      "page": 9,
+      "quote": "Use of Funds Breakdown Product & AI R&D (35%) $4.2M Sales & Marketing (30%) $3.6M Customer Success (20%) $2.4M Regulatory & Cyber (15%) $1.8M"
+    },
+    "traction": [
+      {
+        "value": "Deployed in 32 clinics with $2.1M ARR",
+        "source": "deck",
+        "page": 2,
+        "quote": "Deployed in 32 clinics with $2.1M ARR"
+      },
+      {
+        "value": "a 28% reduction in admin time per therapist and an 18% decrease in claim denials",
+        "source": "deck",
+        "page": 2,
+        "quote": "demonstrating a 28% reduction in admin time per therapist and an 18% decrease in claim denials."
+      },
+      {
+        "value": "114% Net Rev Retention",
+        "source": "deck",
+        "page": 13,
+        "quote": "114% Net Rev Retention"
+      }
+    ],
+    "market_claims": [
+      {
+        "value": "$38.5B Fragmented Physical Rehabilitation Market",
+        "source": "deck",
+        "page": 2,
+        "quote": "Digitizing a $38.5B Fragmented Physical Rehabilitation Market burdened by manual administrative workflows, billing inefficiencies, and therapist burnout."
+      },
+      {
+        "value": "Top 8 PT chains control only 11.3% of the U.S. market",
+        "source": "deck",
+        "page": 11,
+        "quote": "Top 8 PT chains control only 11.3% of the U.S. market; 88%+ of clinics are independent or small regional chains needing modern software."
+      }
+    ],
+    "regulatory_claims": [
+      {
+        "value": "Exempt/Non-Device Medical Software",
+        "source": "deck",
+        "page": 16,
+        "quote": "FDA Regulatory Classification Exempt/Non-Device Medical Software."
+      },
+      {
+        "value": "Fully compliant with U.S. HIPAA privacy and security regulations",
+        "source": "deck",
+        "page": 16,
+        "quote": "Fully compliant with U.S. HIPAA privacy and security regulations."
+      },
+      {
+        "value": "Evaluating required regulation (e.g., 510k) for the upcoming AI-based auto-coding model launch.",
+        "source": "deck",
+        "page": 16,
+        "quote": "Evaluating required regulation (e.g., 510k) for the upcoming AI-based auto-coding model launch."
+      }
+    ],
+    "positive_signals": [
+      {
+        "point": "The deck reports $2.1M ARR across 32 clinics, indicating existing commercial deployment.",
+        "supporting_fields": [
+          "traction"
+        ]
+      },
+      {
+        "point": "The deck reports operational improvements in therapist admin time and claim denials.",
+        "supporting_fields": [
+          "traction"
+        ]
+      },
+      {
+        "point": "The stated target customer segment is specific, focusing on outpatient chains and hospitals.",
+        "supporting_fields": [
+          "target_customer"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "point": "The AI auto-coding launch has regulatory requirements still under evaluation, according to the deck.",
+        "supporting_fields": [
+          "regulatory_claims",
+          "use_of_funds"
+        ]
+      },
+      {
+        "point": "The reported ARR and retention metrics are not accompanied by cohort definitions or supporting calculations in the supplied materials.",
+        "supporting_fields": [
+          "traction"
+        ]
+      }
+    ],
+    "critical_unknowns": [
+      "What is the pre-money valuation and full preferred-share term sheet?",
+      "Which legal entity is the issuer, and how are Agility Health and AgileRPM related?",
+      "How are ARR and net revenue retention defined, and what customer cohorts support those metrics?",
+      "What regulatory pathway and timeline apply to the planned AI auto-coding model?",
+      "Does the $3,500,000 USD historical R&D raised represent all capital raised to date?"
+    ],
+    "founder_questions": [
+      {
+        "question": "What is the proposed pre-money valuation, and can you share the preferred-share term sheet and capitalization table?",
+        "why_it_matters": "The materials state round and fund ownership percentages but do not provide a pre-money valuation or full financing terms."
+      },
+      {
+        "question": "Which entity will issue the preferred shares, and how are AgileRPM and Agility Health legally and financially related?",
+        "why_it_matters": "The deck presents both names and describes clinical and software divisions, so issuer scope and software economics need clarification."
+      },
+      {
+        "question": "How do you calculate ARR and 114% net revenue retention, and can you provide customer-level cohort, churn, and expansion data?",
+        "why_it_matters": "These reported metrics are central to assessing recurring revenue durability, but their definitions and supporting detail are not supplied."
+      },
+      {
+        "question": "What regulatory assessment has been completed for AI auto-coding, and what approvals or changes could affect the launch timeline?",
+        "why_it_matters": "The deck says required regulation is still being evaluated for the planned model."
+      },
+      {
+        "question": "What does the $3,500,000 USD historical R&D raised figure include, and what is the company's total capital raised to date?",
+        "why_it_matters": "The deck labels the figure as historical R&D raised, which may not describe total capital raised."
+      }
+    ],
+    "contradictions": []
+  }
+}

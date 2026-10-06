@@ -1,0 +1,194 @@
+{
+  "status": "validated",
+  "model": "gpt-6-luna",
+  "pdf_sha256": "e6e328d48c52e1cbacb077ebfb4ebb4b814f2c98bf958d9e226d6365272ffe9d",
+  "external_verification": "not_performed",
+  "processing_notes": [
+    "market_claims[0]: EXCLUDED; missing or unverified source quote.",
+    "risks: removed conclusions with missing supporting fields."
+  ],
+  "warnings": [],
+  "brief": {
+    "company_name": {
+      "value": "AgileRPM",
+      "source": "email",
+      "page": null,
+      "quote": "AgileRPM"
+    },
+    "product": {
+      "value": "Enterprise SaaS Platform for Physical Rehabilitation Practice Management",
+      "source": "deck",
+      "page": 1,
+      "quote": "Enterprise SaaS Platform for Physical Rehabilitation Practice Management"
+    },
+    "target_customer": {
+      "value": "Outpatient Chains 10-100 Locations & Hospitals",
+      "source": "deck",
+      "page": 10,
+      "quote": "AGILERPM SOM TARGET Serviceable Obtainable Market (Outpatient Chains 10-100 Locations & Hospitals)"
+    },
+    "funding_round": {
+      "value": "Series A Growth Round",
+      "source": "deck",
+      "page": 9,
+      "quote": "Financing Round Series A Growth Round"
+    },
+    "round_target": {
+      "value": "$12,000,000 USD",
+      "source": "deck",
+      "page": 9,
+      "quote": "Total Round Target $12,000,000 USD"
+    },
+    "requested_fund_check": {
+      "value": null,
+      "source": "unknown",
+      "page": null,
+      "quote": null
+    },
+    "amount_raised_to_date": {
+      "value": "$3,500,000 USD",
+      "source": "deck",
+      "page": 9,
+      "quote": "Historical R&D Raised $3,500,000 USD"
+    },
+    "pre_money": {
+      "value": null,
+      "source": "unknown",
+      "page": null,
+      "quote": null
+    },
+    "use_of_funds": {
+      "value": "Product & AI R&D (35%) $4.2M Sales & Marketing (30%) $3.6M Customer Success (20%) $2.4M Regulatory & Cyber (15%) $1.8M",
+      "source": "deck",
+      "page": 9,
+      "quote": "Use of Funds Breakdown Product & AI R&D (35%) $4.2M Sales & Marketing (30%) $3.6M Customer Success (20%) $2.4M Regulatory & Cyber (15%) $1.8M"
+    },
+    "traction": [
+      {
+        "value": "$2.1M",
+        "source": "deck",
+        "page": 13,
+        "quote": "Trailing 12 Months Metrics (2024-2025) $2.1M ARR"
+      },
+      {
+        "value": "32",
+        "source": "deck",
+        "page": 13,
+        "quote": "32 Active Clinics"
+      },
+      {
+        "value": "114%",
+        "source": "deck",
+        "page": 13,
+        "quote": "114% Net Rev Retention"
+      }
+    ],
+    "market_claims": [
+      {
+        "value": "88%+ of clinics are independent or small regional chains needing modern software.",
+        "source": "deck",
+        "page": 11,
+        "quote": "Top 8 PT chains control only 11.3% of the U.S. market; 88%+ of clinics are independent or small regional chains needing modern software."
+      }
+    ],
+    "regulatory_claims": [
+      {
+        "value": "Exempt/Non-Device Medical Software.",
+        "source": "deck",
+        "page": 16,
+        "quote": "FDA Regulatory Classification Exempt/Non-Device Medical Software."
+      },
+      {
+        "value": "Fully compliant with U.S. HIPAA privacy and security regulations.",
+        "source": "deck",
+        "page": 16,
+        "quote": "HIPAA Compliant & Data Fully compliant with U.S. HIPAA privacy and security regulations."
+      },
+      {
+        "value": "SOC 2 Type II Certified for cloud security, availability, and confidentiality.",
+        "source": "deck",
+        "page": 16,
+        "quote": "SOC 2 Type II Certified for cloud security, availability, and confidentiality."
+      }
+    ],
+    "positive_signals": [
+      {
+        "point": "The deck reports commercial deployment across 32 clinics with $2.1M ARR and 114% net revenue retention.",
+        "supporting_fields": [
+          "traction"
+        ]
+      },
+      {
+        "point": "The product is described as commercialized and active across clinics, with a stated intended use focused on practice management.",
+        "supporting_fields": [
+          "product",
+          "regulatory_claims"
+        ]
+      },
+      {
+        "point": "The deck allocates funding to product development, sales, customer success, and regulatory and cybersecurity work.",
+        "supporting_fields": [
+          "use_of_funds"
+        ]
+      }
+    ],
+    "risks": [
+      {
+        "point": "The deck says regulation for the upcoming AI auto-coding model is still being evaluated, leaving its pathway unclear.",
+        "supporting_fields": [
+          "product",
+          "regulatory_claims"
+        ]
+      },
+      {
+        "point": "The deck identifies hospital-system interoperability as a high execution risk and says connectors remain to be built.",
+        "supporting_fields": [
+          "product",
+          "use_of_funds"
+        ]
+      }
+    ],
+    "critical_unknowns": [
+      "market_claims[0]: EXCLUDED; missing or unverified source quote.",
+      "The fund-check amount conflicts: the email says $4,000,000 USD, while the deck says $3,000,000 USD.",
+      "No pre-money valuation is provided.",
+      "Clarify whether the $3,500,000 USD historical R&D raised represents all prior capital raised.",
+      "The deck does not provide detail on how SaaS ARR, retention, and unit-economics metrics are defined or calculated."
+    ],
+    "founder_questions": [
+      {
+        "question": "Is the requested fund check $3,000,000 USD or $4,000,000 USD, and what is the current round allocation?",
+        "why_it_matters": "The email and deck state different check sizes."
+      },
+      {
+        "question": "What are the proposed pre-money valuation and preferred-share terms?",
+        "why_it_matters": "The deck identifies a priced equity round but does not provide a pre-money valuation or detailed terms."
+      },
+      {
+        "question": "How do you define ARR and net revenue retention, and can you share their clinic-level composition and period-end dates?",
+        "why_it_matters": "These reported traction metrics are central to assessing software performance."
+      },
+      {
+        "question": "What regulatory assessment has been completed for AI auto-coding, and what steps remain before launch?",
+        "why_it_matters": "The deck says the required regulation for the upcoming model is still being evaluated."
+      }
+    ],
+    "contradictions": [
+      {
+        "topic": "Requested fund check",
+        "first": {
+          "value": "$4,000,000 USD",
+          "source": "email",
+          "page": null,
+          "quote": "We are raising a $12,000,000 USD Series A round and requesting $4,000,000 USD from your fund."
+        },
+        "second": {
+          "value": "$3,000,000 USD",
+          "source": "deck",
+          "page": 9,
+          "quote": "Requested Fund Check $3,000,000 USD"
+        }
+      }
+    ]
+  }
+}

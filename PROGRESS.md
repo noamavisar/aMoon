@@ -178,3 +178,48 @@ M5 — implement one LLM analyst that receives the email body and
 page-numbered deck text, returns a structured screening brief,
 and preserves sources, missing information and contradictions.
 
+## M5 — Lean Investment Screening Analyst
+
+Status: completed locally
+
+### Implemented
+- Added `app/m5_analyst.py`.
+- Added `scripts/run_m5.py`.
+- Added `tests/test_m5.py`.
+- Implemented one analyst receiving the email body and
+  page-numbered PDF text from M4.
+- Added a structured ScreeningBrief.
+- Added deterministic checks for source quotes and literal values.
+- Preserved missing information and source contradictions.
+
+### Verification
+- All 6 validation tests passed.
+- A live model run produced a validated local brief.
+- Manually checked 3 central facts against their sources.
+- Kept round target, requested fund check and historical
+  fundraising separate.
+- Checked that missing pre-money valuation was not inferred.
+- Reviewed one risk and one founder question.
+- Tested conflicting fund-check amounts:
+  $4M in the email versus $3M in the deck.
+- Confirmed that both claims and the unresolved conflict
+  were preserved.
+
+### Scope
+- Sources are the supplied email and PDF only.
+- External verification was not performed.
+- Quote validation does not establish the truth of company claims.
+- Local results are stored under `work/m5`.
+- API/n8n integration and final brief storage remain pending.
+
+### Run Details
+- Model: gpt-6-luna
+- Actual time spent: 45 minutes
+- Known blockers: None
+
+### Next
+Connect the validated analyst to the existing analyze endpoint,
+preserve the email context, and generate the readable text brief.
+
+
+
