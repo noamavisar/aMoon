@@ -102,47 +102,40 @@ def prepare_brief(brief, email, parsed):
             quote=quote,
         )
 
-    # Prefer the company name explicitly supplied with the demo input.
-    hint = email.get("company_name")
-    candidate = (
-        hint
-        if hint is not None
-        else brief.company_name.value
-    )
-
-    if not isinstance(candidate, str) or not candidate.strip():
-        raise ValueError(
-            "Provide company_name in the email input for this demo."
-        )
-
-    candidate = normalize_whitespace(candidate)
-
-    pattern = re.compile(
-        r"(?<!\w)" + re.escape(candidate) + r"(?!\w)",
-        re.I,
-    )
-
+    # A live email does not require a manually supplied company name.
+    candidate = email.get("company_name") or brief.company_name.value
     company = None
 
-    for source, page, text in sources:
-        match = pattern.search(text)
+    if isinstance(candidate, str) and candidate.strip():
+        candidate = normalize_whitespace(candidate)
 
-        if match:
-            company = Fact(
-                value=match.group(),
-                source=source,
-                page=page,
-                quote=match.group(),
-            )
-            break
+        pattern = re.compile(
+            r"(?<!\w)" + re.escape(candidate) + r"(?!\w)",
+            re.I,
+        )
+
+        for source, page, text in sources:
+            match = pattern.search(text)
+
+            if match:
+                company = Fact(
+                    value=match.group(),
+                    source=source,
+                    page=page,
+                    quote=match.group(),
+                )
+                break
 
     if company is None:
-        raise ValueError(
-            "company_name must actually appear "
-            "in the email body or PDF text."
+        company = missing()
+
+        notes.append(
+            "company_name: EXCLUDED; no supported company name was found. "
+            "Confirm it manually."
         )
 
     brief.company_name = company
+
 
     # Normalize every scalar field, not just the field that failed.
     for name in FACT_FIELDS:

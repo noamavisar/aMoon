@@ -1,17 +1,42 @@
-from app.classifiers.factory import create_pitch_classifier
-from fastapi import HTTPException, status, FastAPI
-from app.config import DATA_DIR
-from pathlib import Path
-import base64
-import binascii
-import os
+# from app.classifiers.factory import create_pitch_classifier
+# from fastapi import HTTPException, status, FastAPI
+# from app.config import DATA_DIR
+# from pathlib import Path
+# import base64
+# import binascii
+# import os
+# import logging
+# from app.schemas import (
+#     EmailEnvelope,
+#     TriageResponse,
+#     AnalyzeRequest
+# )
+import asyncio
 import logging
+
+from fastapi import FastAPI
+
+from app.classifiers.factory import create_pitch_classifier
+from app.config import DATA_DIR
 from app.schemas import (
     EmailEnvelope,
     TriageResponse,
-    AnalyzeRequest
+    AnalyzeRequest,
+    OutcomeRequest,
 )
-
+from app.m6_integration import (
+    DEMO_LOCK,
+    FINAL_STATUSES,
+    finish,
+    load_record,
+    new_record,
+    opportunity_id_for,
+    require_record,
+    require_same_email,
+    run_analysis,
+    save_record,
+    summary,
+)
 
 app = FastAPI(
     title="Investment Intake Copilot",
@@ -31,124 +56,136 @@ async def health():
         "data_dir_exists": DATA_DIR.exists(),
     }
 
-@app.post(
-    "/triage",
-    response_model=TriageResponse,
-)
-async def triage(
-    email: EmailEnvelope,
-) -> TriageResponse:
+@app.post("/triage", response_model=TriageResponse)
+async def triage(email: EmailEnvelope) -> TriageResponse:
+    async with DEMO_LOCK:
+        opportunity_id = opportunity_id_for(email)
+        record = load_record(opportunity_id)
 
-    try:
-        result = await classifier.classify(email)
+        if record is not None:
+            require_same_email(record, email)
 
-        return TriageResponse(
-            status="success",
-            action=result.action,
-            classification=result,
-            error_code=None,
-        )
+            if record["triage"] is not None:
+                cached = dict(record["triage"])
+                cached.update(
+                    record_status=record["status"],
+                    reused=True,
+                )
+                return TriageResponse(**cached)
 
-    except Exception:
-        logger.exception("classifier_failed")
+            finish(
+                record,
+                "failed",
+                "Previous triage was interrupted.",
+                "triage_interrupted",
+            )
 
-        return TriageResponse(
-            status="failed",
-            action=None,
-            classification=None,
-            error_code="classifier_failed",
-        )
-# @app.post("/triage")
-# async def triage():
-#     return {
-#         "status": "stub",
-#         "message": "Triage endpoint is not implemented yet.",
-#         "action": "process",
-#     }
+            return TriageResponse(
+                status="failed",
+                opportunity_id=opportunity_id,
+                record_status="failed",
+                error_code="triage_interrupted",
+                reused=True,
+            )
+
+        record = new_record(email)
+        save_record(record)
+
+        try:
+            result = await asyncio.wait_for(
+                classifier.classify(email),
+                timeout=120,
+            )
+
+            record["classification"] = result.model_dump(
+                mode="json"
+            )
+
+            action = result.action.value
+
+            record["status"] = (
+                "triaged"
+                if action == "process"
+                else action
+            )
+
+            record["reason"] = result.rationale
+
+            response = TriageResponse(
+                status="success",
+                action=result.action,
+                classification=result,
+                opportunity_id=opportunity_id,
+                record_status=record["status"],
+            )
+
+        except Exception as exc:
+            code = (
+                "classifier_timeout"
+                if isinstance(exc, TimeoutError)
+                else "classifier_failed"
+            )
+
+            logger.error(
+                "%s (%s)",
+                code,
+                type(exc).__name__,
+            )
+
+            record.update(
+                status="failed",
+                reason=code,
+                error_code=code,
+            )
+
+            response = TriageResponse(
+                status="failed",
+                error_code=code,
+                opportunity_id=opportunity_id,
+                record_status="failed",
+            )
+
+        record["triage"] = response.model_dump(mode="json")
+        save_record(record)
+
+        return response
 
 
 MAX_PDF_BYTES = 10 * 1024 * 1024
-@app.post(
-    "/opportunities/{opportunity_id}/analyze",
-    status_code=status.HTTP_202_ACCEPTED,
-)
-def analyze_opportunity(
+@app.post("/opportunities/{opportunity_id}/analyze")
+async def analyze_opportunity(
     opportunity_id: str,
     request: AnalyzeRequest,
 ):
-    # 1. Validate MIME type
-    if request.mime_type.lower() != "application/pdf":
-        raise HTTPException(
-            status_code=415,
-            detail="Only application/pdf is supported",
+    async with DEMO_LOCK:
+        record = require_record(opportunity_id)
+        require_same_email(record, request.email)
+
+        return await run_analysis(record, request)
+
+
+@app.post("/opportunities/{opportunity_id}/outcome")
+async def save_outcome(
+    opportunity_id: str,
+    request: OutcomeRequest,
+):
+    async with DEMO_LOCK:
+        record = require_record(opportunity_id)
+
+        if (
+            record["status"] in FINAL_STATUSES
+            or record["status"] == "processing"
+        ):
+            return summary(record, reused=True)
+
+        return finish(
+            record,
+            request.status,
+            request.reason,
+            request.error_code,
         )
 
-    # 2. Decode Base64 into the original PDF bytes
-    try:
-        pdf_bytes = base64.b64decode(
-            request.content_base64,
-            validate=True,
-        )
-    except (binascii.Error, ValueError):
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid Base64 content",
-        )
 
-    # 3. Make sure we actually received data
-    if not pdf_bytes:
-        raise HTTPException(
-            status_code=400,
-            detail="Decoded PDF is empty",
-        )
-
-    # 4. Enforce the M2 limit AFTER decoding
-    if len(pdf_bytes) > MAX_PDF_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail="PDF exceeds the 10 MiB demo limit",
-        )
-
-    # 5. Basic sanity check that the bytes look like a PDF
-    if not pdf_bytes.startswith(b"%PDF-"):
-        raise HTTPException(
-            status_code=400,
-            detail="Decoded content does not appear to be a PDF",
-        )
-
-    # 6. Build a local output directory
-    data_root = Path(
-        os.getenv("DIR_DATA", "data")
-    )
-
-    output_dir = (
-        data_root
-        / "m2_received"
-        / opportunity_id
-    )
-
-    output_dir.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    # 7. Save the exact bytes received from n8n
-    output_path = output_dir / "deck.pdf"
-
-    output_path.write_bytes(pdf_bytes)
-
-    # 8. Return proof that transport worked.
-    # Analysis itself is intentionally still a stub in M2.
-    return {
-        "status": "stub",
-        "opportunity_id": opportunity_id,
-        "attachment_id": request.attachment_id,
-        "filename": request.filename,
-        "mime_type": request.mime_type,
-        "decoded_size_bytes": len(pdf_bytes),
-        "saved_path": str(output_path),
-        "message": (
-            "PDF received and saved successfully. "
-            "Analysis pipeline is not implemented yet."
-        ),
-    }
+@app.get("/opportunities/{opportunity_id}")
+def get_opportunity(opportunity_id: str):
+    return summary(require_record(opportunity_id), reused=True)

@@ -348,6 +348,7 @@ async def analyze_email_and_deck(
     email: dict,
     parsed: ParsedPdf,
     model: str,
+    output_dir: Path | None = None,
 ) -> ScreeningBrief:
     from agents import Agent, Runner
 
@@ -395,7 +396,7 @@ async def analyze_email_and_deck(
 
     from app.m5_cleanup import prepare_brief
 
-    output_dir = Path("work/m5")
+    output_dir = Path(output_dir) if output_dir is not None else Path("work/m5")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Save before cleanup or validation can fail.

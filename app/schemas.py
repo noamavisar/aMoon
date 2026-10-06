@@ -131,6 +131,10 @@ class TriageResponse(BaseModel):
     must not be treated as a normal non-pitch classification.
     """
 
+    opportunity_id: str | None = None
+    record_status: str | None = None
+    reused: bool = False
+
     status: Literal["success", "failed"]
     action: TriageAction | None = None
     classification: ClassificationResult | None = None
@@ -158,3 +162,11 @@ class AnalyzeRequest(BaseModel):
     filename: str
     mime_type: str
     content_base64: str
+    email: EmailEnvelope
+
+
+
+class OutcomeRequest(BaseModel):
+    status: Literal["review_manual", "failed"]
+    reason: str = Field(min_length=1, max_length=1000)
+    error_code: str | None = None
