@@ -6,6 +6,9 @@ services:
 
     env_file:
       - .env
+      
+    environment:
+      DATA_DIR: /app/data
 
     ports:
       - "127.0.0.1:8000:8000"
