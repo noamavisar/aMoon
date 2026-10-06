@@ -6,7 +6,8 @@ import zipfile
 
 from pptx import Presentation
 from pptx.enum.shapes import MSO_SHAPE_TYPE
-
+from dataclasses import dataclass
+import hashlib
 
 MAX_UNCOMPRESSED_PPTX_BYTES = 100 * 1024 * 1024
 
@@ -271,3 +272,121 @@ def extract_pptx_text(data: bytes) -> dict:
         "full_text": full_text,
         "warnings": warnings,
     }
+
+
+
+MIN_DECK_TEXT_CHARS = 200
+
+
+@dataclass(frozen=True)
+class DeckWarning:
+    message: str
+
+
+@dataclass(frozen=True)
+class DeckPage:
+    page_number: int
+    text: str
+
+    @property
+    def slide_number(self) -> int:
+        return self.page_number
+
+    @property
+    def number(self) -> int:
+        return self.page_number
+
+
+# @dataclass(frozen=True)
+# class ParsedDeck:
+#     pages: list[DeckPage]
+#     page_count: int
+#     sha256: str
+#     warnings: list[DeckWarning]
+#     full_text: str
+#     char_count: int
+
+#     @property
+#     def text(self) -> str:
+#         return self.full_text
+
+@dataclass(frozen=True)
+class ParsedDeck:
+    pages: list[DeckPage]
+    page_count: int
+    sha256: str
+    warnings: list[DeckWarning]
+    full_text: str
+    char_count: int
+
+    @property
+    def text(self) -> str:
+        return self.full_text
+
+    def to_dict(self) -> dict:
+        return {
+            "pages": [
+                {
+                    "page_number": page.page_number,
+                    "text": page.text,
+                }
+                for page in self.pages
+            ],
+            "page_count": self.page_count,
+            "sha256": self.sha256,
+            "warnings": [
+                {
+                    "message": warning.message,
+                }
+                for warning in self.warnings
+            ],
+            "full_text": self.full_text,
+            "char_count": self.char_count,
+        }
+
+def parse_pptx_document(
+    data: bytes,
+) -> ParsedDeck:
+    result = extract_pptx_text(data)
+
+    if result["char_count"] < MIN_DECK_TEXT_CHARS:
+        raise DeckExtractionError(
+            "Too little extractable text was found in the deck."
+        )
+
+    pages: list[DeckPage] = []
+
+    for index, slide in enumerate(
+        result["slides"],
+        start=1,
+    ):
+        slide_number = slide.get(
+            "slide_number",
+            slide.get("number", index),
+        )
+
+        slide_text = slide.get(
+            "text",
+            "",
+        )
+
+        pages.append(
+            DeckPage(
+                page_number=int(slide_number),
+                text=slide_text,
+            )
+        )
+
+    warnings = [
+        DeckWarning(message=str(item))
+        for item in result["warnings"]
+    ]
+
+    return ParsedDeck(
+        pages=pages,
+        page_count=result["slide_count"],
+        sha256=hashlib.sha256(data).hexdigest(),
+        warnings=warnings,
+        full_text=result["full_text"],
+        char_count=result["char_count"],
+    )

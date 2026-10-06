@@ -1,16 +1,3 @@
-# from app.classifiers.factory import create_pitch_classifier
-# from fastapi import HTTPException, status, FastAPI
-# from app.config import DATA_DIR
-# from pathlib import Path
-# import base64
-# import binascii
-# import os
-# import logging
-# from app.schemas import (
-#     EmailEnvelope,
-#     TriageResponse,
-#     AnalyzeRequest
-# )
 import asyncio
 import logging
 
@@ -151,7 +138,6 @@ async def triage(email: EmailEnvelope) -> TriageResponse:
         return response
 
 
-MAX_PDF_BYTES = 10 * 1024 * 1024
 @app.post("/opportunities/{opportunity_id}/analyze")
 async def analyze_opportunity(
     opportunity_id: str,

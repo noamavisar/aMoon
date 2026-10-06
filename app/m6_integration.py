@@ -10,12 +10,32 @@ import re
 from fastapi import HTTPException
 
 from app.config import DATA_DIR
-from app.m4_pdf import MAX_PDF_BYTES, PdfParsingError, parse_pdf
+
 from app.m5_analyst import analyze_email_and_deck, validate_brief
+from app.deck_extractor import (
+    parse_pptx_document,
+    DeckExtractionError,
+)
 
 
 DEMO_LOCK = asyncio.Lock()
 FINAL_STATUSES = {"completed", "skip", "review_manual", "failed"}
+MAX_DECK_BYTES = 10 * 1024 * 1024
+
+PPTX_MIME = (
+    "application/vnd.openxmlformats-officedocument."
+    "presentationml.presentation"
+)
+
+
+def is_pptx_attachment(
+    filename: str,
+    mime_type: str,
+) -> bool:
+    return (
+        mime_type.lower() == PPTX_MIME
+        or filename.lower().endswith(".pptx")
+    )
 
 
 def now():
@@ -142,7 +162,7 @@ def render_brief(record):
         "INVESTMENT INTAKE — INITIAL SCREENING BRIEF",
         f"Opportunity: {record['opportunity_id']}",
         f"Email subject: {record['email']['subject']}",
-        "Sources reviewed: email and supplied PDF.",
+        "Sources reviewed: email and supplied pitch deck.",
         "External verification: not performed.",
         "Source matching confirms presence, not the truth of company claims.",
         "Prepared for human review. No investment score or automated decision.",
@@ -281,7 +301,9 @@ async def run_analysis(record, request):
     if record["status"] != "triaged":
         return summary(record, reused=True)
 
-    directory = folder(record["opportunity_id"])
+    directory = folder(
+        record["opportunity_id"]
+    )
 
     record.update(
         status="processing",
@@ -291,70 +313,109 @@ async def run_analysis(record, request):
     save_record(record)
 
     try:
-        pdfs = [
+        pptx_files = [
             item
             for item in record["email"]["attachments"]
-            if item["mime_type"].lower() == "application/pdf"
-            or item["filename"].lower().endswith(".pdf")
+            if is_pptx_attachment(
+                item["filename"],
+                item["mime_type"],
+            )
         ]
 
-        if len(pdfs) != 1:
-            raise PdfParsingError(
-                "pdf_count_invalid",
-                "Expected exactly one PDF.",
+        if len(pptx_files) != 1:
+            raise DeckProcessingError(
+                "deck_count_invalid",
+                "Expected exactly one PPTX deck.",
             )
+
+        selected_deck = pptx_files[0]
 
         if (
-            request.attachment_id != pdfs[0]["attachment_id"]
-            or request.filename != pdfs[0]["filename"]
+            request.attachment_id
+            != selected_deck["attachment_id"]
+            or request.filename
+            != selected_deck["filename"]
         ):
-            raise PdfParsingError(
-                "pdf_attachment_mismatch",
-                "Wrong attachment.",
+            raise DeckProcessingError(
+                "deck_attachment_mismatch",
+                "Wrong deck attachment.",
             )
 
-        if request.mime_type.lower() != "application/pdf":
-            raise PdfParsingError(
-                "pdf_mime_unsupported",
-                "Expected application/pdf.",
+        if not is_pptx_attachment(
+            request.filename,
+            request.mime_type,
+        ):
+            raise DeckProcessingError(
+                "deck_mime_unsupported",
+                "Expected a PPTX deck.",
             )
 
-        max_base64 = 4 * ((MAX_PDF_BYTES + 2) // 3)
+        max_base64 = 4 * (
+            (MAX_DECK_BYTES + 2) // 3
+        )
 
-        if len(request.content_base64) > max_base64:
-            raise PdfParsingError(
-                "pdf_too_large",
-                "PDF exceeds 10 MiB.",
+        if (
+            len(request.content_base64)
+            > max_base64
+        ):
+            raise DeckProcessingError(
+                "deck_too_large",
+                "Deck exceeds 10 MiB.",
             )
 
         try:
-            pdf_bytes = base64.b64decode(
+            pptx_bytes = base64.b64decode(
                 request.content_base64,
                 validate=True,
             )
-        except (binascii.Error, ValueError) as exc:
-            raise PdfParsingError(
-                "pdf_invalid_base64",
+        except (
+            binascii.Error,
+            ValueError,
+        ) as exc:
+            raise DeckProcessingError(
+                "deck_invalid_base64",
                 "Invalid Base64.",
             ) from exc
 
-        if not pdf_bytes.startswith(b"%PDF-"):
-            raise PdfParsingError(
-                "pdf_invalid",
-                "Content is not a PDF.",
+        if len(pptx_bytes) > MAX_DECK_BYTES:
+            raise DeckProcessingError(
+                "deck_too_large",
+                "Deck exceeds 10 MiB.",
             )
 
-        parsed = await asyncio.to_thread(parse_pdf, pdf_bytes)
+        try:
+            parsed = await asyncio.to_thread(
+                parse_pptx_document,
+                pptx_bytes,
+            )
+        except DeckExtractionError as exc:
+            raise DeckProcessingError(
+                "deck_extraction_failed",
+                str(exc),
+            ) from exc
 
-        (directory / "deck.pdf").write_bytes(pdf_bytes)
+        write_text(
+            directory / "deck.txt",
+            parsed.full_text,
+        )
 
         record["deck"] = {
-            "attachment_id": request.attachment_id,
-            "filename": request.filename,
-            "mime_type": request.mime_type,
-            "decoded_size_bytes": len(pdf_bytes),
-            "page_count": parsed.page_count,
-            "sha256": parsed.sha256,
+            "attachment_id":
+                request.attachment_id,
+            "filename":
+                request.filename,
+            "mime_type":
+                request.mime_type,
+            "decoded_size_bytes":
+                len(pptx_bytes),
+            "slide_count":
+                parsed.page_count,
+            "char_count":
+                parsed.char_count,
+            "sha256":
+                parsed.sha256,
+            "text_file":
+                "deck.txt",
         }
 
         record["warnings"] = [
@@ -380,7 +441,9 @@ async def run_analysis(record, request):
         record["analysis_model"] = model
         save_record(record)
 
-        debug_dir = directory / "analysis_debug"
+        debug_dir = (
+            directory / "analysis_debug"
+        )
 
         brief = await analyze_email_and_deck(
             record["email"],
@@ -395,17 +458,23 @@ async def run_analysis(record, request):
             parsed,
         )
 
-        notes_path = debug_dir / "cleanup.json"
+        notes_path = (
+            debug_dir / "cleanup.json"
+        )
 
         notes = json.loads(
-            notes_path.read_text(encoding="utf-8")
+            notes_path.read_text(
+                encoding="utf-8"
+            )
         )["notes"]
 
         record["processing_notes"] = notes
 
         record["analysis"] = {
             "model": model,
-            "brief": brief.model_dump(mode="json"),
+            "brief": brief.model_dump(
+                mode="json"
+            ),
         }
 
         write_text(
@@ -419,9 +488,13 @@ async def run_analysis(record, request):
             else "brief_saved"
         )
 
-        return finish(record, "completed", reason)
+        return finish(
+            record,
+            "completed",
+            reason,
+        )
 
-    except PdfParsingError as exc:
+    except DeckProcessingError as exc:
         return finish(
             record,
             "review_manual",
@@ -460,3 +533,15 @@ async def run_analysis(record, request):
             f"Analyst failed ({type(exc).__name__}).",
             "analyst_failed",
         )
+
+    
+
+class DeckProcessingError(Exception):
+    def __init__(
+        self,
+        code: str,
+        message: str,
+    ):
+        super().__init__(message)
+        self.code = code
+        self.message = message

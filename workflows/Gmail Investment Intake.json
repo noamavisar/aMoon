@@ -1,0 +1,539 @@
+{
+  "name": "Gmail Investment Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "Label_5353553750409452742"
+          ],
+          "readStatus": "unread"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        16,
+        0
+      ],
+      "id": "eed4c306-073d-4768-acc9-3a8ad0394b3f",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D247XqgXCpb1t1BZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d26eea2e-601c-47bf-a875-34482df626da",
+      "name": "Get Full Message",
+      "webhookId": "737b11c8-7f1f-4758-a73e-cd174f57df85",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "D247XqgXCpb1t1BZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const msg = $json;\nconst binary = $binary ?? {};\n\nconst MAILBOX_ID = 'avisarnoam1@gmail.com';\n\n// --------------------------------------------------\n// Sender\n// --------------------------------------------------\n\nlet sender = null;\n\nif (msg.from?.text) {\n  sender = msg.from.text;\n} else if (msg.from?.value?.length) {\n  const firstSender = msg.from.value[0];\n\n  sender = firstSender.name\n    ? `${firstSender.name} <${firstSender.address}>`\n    : firstSender.address;\n}\n\n// --------------------------------------------------\n// Subject\n// --------------------------------------------------\n\nconst subject = msg.subject ?? null;\n\n// --------------------------------------------------\n// Received date\n// --------------------------------------------------\n\nlet receivedAt = null;\n\nif (msg.date) {\n  const parsedDate = new Date(msg.date);\n\n  if (!Number.isNaN(parsedDate.getTime())) {\n    receivedAt = parsedDate.toISOString();\n  }\n}\n\n// --------------------------------------------------\n// Body\n// Prefer text/plain. Fall back to HTML.\n// --------------------------------------------------\n\nlet textBody = '';\n\nif (typeof msg.text === 'string' && msg.text.trim()) {\n  textBody = msg.text.trim();\n} else if (typeof msg.html === 'string' && msg.html.trim()) {\n  textBody = msg.html\n    .replace(/<br\\s*\\/?>/gi, '\\n')\n    .replace(/<\\/p>/gi, '\\n')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/gi, ' ')\n    .replace(/&amp;/gi, '&')\n    .replace(/\\s+\\n/g, '\\n')\n    .replace(/\\n\\s+/g, '\\n')\n    .replace(/[ \\t]+/g, ' ')\n    .trim();\n}\n\n// --------------------------------------------------\n// Attachments from n8n binary data\n// --------------------------------------------------\n\nconst attachmentSources = Object.entries(binary).map(\n  ([binaryPropertyName, file]) => {\n\n    const attachmentId =\n      `${msg.id ?? 'unknown'}:${binaryPropertyName}`;\n\n    return {\n      attachment_id: attachmentId,\n\n      // Internal n8n field.\n      // This is NOT sent inside EmailEnvelope.\n      binary_property: binaryPropertyName,\n\n      filename: file.fileName ?? null,\n      mime_type:\n        file.mimeType ?? 'application/octet-stream',\n\n      // Debug only.\n      file_size: file.fileSize ?? null,\n    };\n  }\n);\n\n// --------------------------------------------------\n// EmailEnvelope sent to /triage\n// --------------------------------------------------\n\nconst emailEnvelope = {\n  mailbox_id: MAILBOX_ID,\n  message_id: msg.id ?? null,\n  thread_id: msg.threadId ?? null,\n  received_at: receivedAt,\n  sender,\n  subject: subject ?? \"\",\n  text_body: textBody ?? \"\",\n  \n  attachments: attachmentSources.map(a => ({\n    filename: a.filename,\n    mime_type: a.mime_type,\n    attachment_id: a.attachment_id,\n  })),\n};\n\nreturn {\n  json: {\n    email_envelope: emailEnvelope,\n\n    // Internal workflow helper.\n    // POST /triage does not receive this object.\n    attachment_sources: attachmentSources,\n  },\n\n// Keep the downloaded attachment alive.\n  binary,\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "957d4fb2-4608-4d23-8dd6-55b9c104e31c",
+      "name": "Normalize Gmail Message"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "process",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ed4a1d1b-35df-4064-86ee-35591c766335"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "process"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d70768ed-3c60-468c-8ebd-0e322f2ce31d",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "skip",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "skip"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cf7af79f-081f-4754-82dd-00a47e63724b",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "review_manual",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "review_manual"
+            }
+          ]
+        },
+        "looseTypeValidation": "=",
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        -16
+      ],
+      "id": "a3198ce3-4131-47ca-bc53-c2dc1878fe27",
+      "name": "Route by Action"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://api:8000/opportunities/' + $json.opportunity_id + '/analyze' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n  email: $json.email,\n  attachment_id: $json.attachment_id,\n  filename: $json.filename,\n  mime_type: $json.mime_type,\n  content_base64: $json.content_base64\n}\n} \n",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 180000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2096,
+        -288
+      ],
+      "id": "0f709b06-e21c-47e5-9404-da95df5ff9d9",
+      "name": "POST Analyze"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "445f5027-21ab-4098-b5c9-265036428413",
+              "leftValue": "={{ $json.ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1808,
+        -272
+      ],
+      "id": "df0d1a19-77df-4a62-827e-1db4f03fb82b",
+      "name": "If API Payload Ready"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const triage = $json;\n\nreturn {\n  json: {\n    opportunity_id: triage.opportunity_id,\n    status: triage.record_status,\n    action: triage.action,\n    reason:\n      triage.classification?.rationale\n      ?? triage.error_code\n      ?? 'No reason returned',\n    reused: triage.reused ?? false,\n    host_record_relative_path:\n      `data/m2_received/${triage.opportunity_id}/record.json`,\n  },\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1152,
+        -48
+      ],
+      "id": "11aabab0-8161-4537-a0f6-f9282156545d",
+      "name": "Show Saved Triage"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const triage = $('POST Classification').item.json;\n\nconst envelope =\n  $('Normalize Gmail Message').item.json.email_envelope;\n\nconst opportunityId =\n  triage.opportunity_id\n  ?? `m2_${envelope.message_id}`;\n\nconst hasAttachmentReason =\n  typeof $json.reason === 'string'\n  && $json.reason.length > 0;\n\nconst outcomeStatus =\n  $json.outcome_status\n  ?? (hasAttachmentReason ? 'review_manual' : 'failed');\n\nconst reason =\n  $json.reason\n  ?? triage.error_code\n  ?? `unexpected_triage_action_${String(triage.action)}`;\n\nreturn {\n  json: {\n    opportunity_id: opportunityId,\n    outcome_status: outcomeStatus,\n    reason: String(reason).slice(0, 1000),\n    error_code:\n      outcomeStatus === 'failed'\n        ? (triage.error_code ?? 'workflow_routing_failed')\n        : 'attachment_not_ready',\n  },\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        -32
+      ],
+      "id": "6c3217cb-53be-4be6-9ff6-e77206fc1097",
+      "name": "Build Stop Outcome"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://api:8000/opportunities/' + $json.opportunity_id + '/outcome' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  status: $json.outcome_status,\n  reason: $json.reason,\n  error_code: $json.error_code\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        2352,
+        -32
+      ],
+      "id": "22a6d745-8bd0-4398-bd87-cc62f2b6bdcb",
+      "name": "POST Save Outcome"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const response = $json;\nconst result = response.body ?? response;\n\nif (!result.opportunity_id || !result.status) {\n  throw new Error('API returned an unexpected analysis response');\n}\n\nreturn {\n  json: {\n    opportunity_id: result.opportunity_id,\n    status: result.status,\n    reason: result.reason,\n    error_code: result.error_code,\n    analyst_runs: result.analyst_runs,\n    reused: result.reused,\n    report_ready: result.status === 'completed',\n    host_record_relative_path:\n      `data/m2_received/${result.opportunity_id}/record.json`,\n    host_brief_relative_path:\n      result.status === 'completed'\n        ? `data/m2_received/${result.opportunity_id}/brief.txt`\n        : null,\n  },\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        -288
+      ],
+      "id": "cdbb5aca-ec1e-4bb1-9767-a28c69c5f22f",
+      "name": "Show Analysis Result"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://api:8000/triage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.email_envelope }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "5491cc68-3ae2-44d3-a8a5-e43508b2fa7f",
+      "name": "POST Classification"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// --------------------------------------------------\n// Read data already created by previous nodes\n// --------------------------------------------------\n\nconst normalizedNode =\n  $('Normalize Gmail Message').item;\n\nconst envelope =\n  normalizedNode.json.email_envelope;\n\nconst attachmentSources =\n  normalizedNode.json.attachment_sources ?? [];\n\nconst triageResult =\n  $('POST Triage').item.json;\n\n// Get the actual downloaded files from Gmail.\nconst gmailItem =\n  $('Get Full Message').item;\n\nconst binary =\n  gmailItem.binary ?? {};\n\n\n// --------------------------------------------------\n// Stable opportunity ID\n// --------------------------------------------------\n\n// Prefer the ID returned by /triage.\n// Keep the old M2 convention only as a fallback.\nconst opportunityId =\n  triageResult.opportunity_id ??\n  `m2_${envelope.message_id}`;\n\nconst PPTX_MIME =\n  'application/vnd.openxmlformats-officedocument.presentationml.presentation';\n\n\n// --------------------------------------------------\n// Find PPTX attachments\n// --------------------------------------------------\n\nconst pptxFiles =\n  attachmentSources.filter(a => {\n\n    const mimeType =\n      String(\n        a.mime_type ?? ''\n      ).toLowerCase();\n\n    const filename =\n      String(\n        a.filename ?? ''\n      ).toLowerCase();\n\n    return (\n      mimeType === PPTX_MIME ||\n      filename.endsWith('.pptx')\n    );\n  });\n\n\n// --------------------------------------------------\n// We require EXACTLY ONE PPTX\n// --------------------------------------------------\n\nif (pptxFiles.length !== 1) {\n  return {\n    json: {\n      ready: false,\n\n      reason:\n        `expected_exactly_one_pptx_found_${pptxFiles.length}`,\n\n      pptx_count:\n        pptxFiles.length,\n\n      opportunity_id:\n        opportunityId,\n\n      message_id:\n        envelope.message_id,\n\n      email:\n        envelope,\n\n      binary_properties_found:\n        Object.keys(binary),\n    }\n  };\n}\n\n\n// --------------------------------------------------\n// Validate that the corresponding binary exists\n// --------------------------------------------------\n\nconst pptx =\n  pptxFiles[0];\n\nif (\n  !pptx.binary_property ||\n  !binary[pptx.binary_property]\n) {\n  return {\n    json: {\n      ready: false,\n\n      reason:\n        'pptx_metadata_found_but_binary_missing',\n\n      pptx_count:\n        1,\n\n      opportunity_id:\n        opportunityId,\n\n      message_id:\n        envelope.message_id,\n\n      email:\n        envelope,\n\n      binary_property:\n        pptx.binary_property ?? null,\n\n      binary_properties_found:\n        Object.keys(binary),\n    }\n  };\n}\n\n\n// --------------------------------------------------\n// Success\n// --------------------------------------------------\n\nreturn {\n  json: {\n    ready: true,\n\n    pptx_count:\n      1,\n\n    opportunity_id:\n      opportunityId,\n\n    message_id:\n      envelope.message_id,\n\n    email:\n      envelope,\n\n    attachment_id:\n      pptx.attachment_id,\n\n    filename:\n      pptx.filename,\n\n    mime_type:\n      pptx.mime_type,\n\n    binary_property:\n      pptx.binary_property,\n  },\n\n  // Pass the actual PPTX binary to the next node.\n  binary,\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -192
+      ],
+      "id": "2ee88e03-3a6c-4ef0-942e-ecb29f1cad26",
+      "name": "Select PPTX Attachment"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7ca12735-6128-437b-a1aa-ce890f416c78",
+              "leftValue": "={{ $json.ready }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        -192
+      ],
+      "id": "105c3ecd-1c2d-4d14-b81f-0a12372a351a",
+      "name": "PPTX Ready?"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const binaryProperty =\n  $json.binary_property;\n\nif (!binaryProperty) {\n  throw new Error(\n    'binary_property is missing'\n  );\n}\n\nif (!$binary?.[binaryProperty]) {\n  throw new Error(\n    `Binary property \"${binaryProperty}\" is missing`\n  );\n}\n\n\n// --------------------------------------------------\n// Read actual PPTX bytes from n8n binary storage\n// --------------------------------------------------\n\nconst buffer =\n  await this.helpers.getBinaryDataBuffer(\n    0,\n    binaryProperty\n  );\n\nif (!buffer || buffer.length === 0) {\n  throw new Error(\n    'PPTX binary buffer is empty'\n  );\n}\n\n\n// --------------------------------------------------\n// Demo limit: 10 MiB decoded file\n// --------------------------------------------------\n\nconst MAX_DECK_BYTES =\n  10 * 1024 * 1024;\n\nif (buffer.length > MAX_DECK_BYTES) {\n  throw new Error(\n    `PPTX exceeds 10 MiB demo limit: ${buffer.length} bytes`\n  );\n}\n\n\n// --------------------------------------------------\n// Convert raw PPTX bytes to Base64\n// --------------------------------------------------\n\nconst contentBase64 =\n  buffer.toString('base64');\n\n\n// --------------------------------------------------\n// Build Analyze request data\n// --------------------------------------------------\n\nreturn {\n  json: {\n    opportunity_id:\n      $json.opportunity_id,\n\n    email:\n      $json.email,\n\n    attachment_id:\n      $json.attachment_id,\n\n    filename:\n      $json.filename,\n\n    mime_type:\n      $json.mime_type,\n\n    content_base64:\n      contentBase64,\n\n    decoded_size_bytes:\n      buffer.length,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        -272
+      ],
+      "id": "e4f3984f-e270-405b-bfdb-88c72e6e738e",
+      "name": "Prepare PPTX for API"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Full Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Full Message": {
+      "main": [
+        [
+          {
+            "node": "Normalize Gmail Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Gmail Message": {
+      "main": [
+        [
+          {
+            "node": "POST Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Select PPTX Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Show Saved Triage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Show Saved Triage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Stop Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If API Payload Ready": {
+      "main": [
+        [
+          {
+            "node": "POST Analyze",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Stop Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Stop Outcome": {
+      "main": [
+        [
+          {
+            "node": "POST Save Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Analyze": {
+      "main": [
+        [
+          {
+            "node": "Show Analysis Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Classification": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select PPTX Attachment": {
+      "main": [
+        [
+          {
+            "node": "PPTX Ready?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PPTX Ready?": {
+      "main": [
+        [
+          {
+            "node": "Prepare PPTX for API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Stop Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare PPTX for API": {
+      "main": [
+        [
+          {
+            "node": "If API Payload Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0de99b2a-afcc-4f0d-b7d1-484e9b335641",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "881e904fa82709cefc3b84eee320d12b808cb7cbbb034715be2f4f747e8b368e"
+  },
+  "nodeGroups": [],
+  "id": "tlcKftdqfwhoxdp5",
+  "tags": []
+}

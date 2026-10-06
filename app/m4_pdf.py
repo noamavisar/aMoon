@@ -5,7 +5,7 @@ import hashlib
 import re
 
 
-MAX_PDF_BYTES = 10 * 1024 * 1024
+MAX_PDF_BYTES = 10 * 1024 * 1024 #delete from all instences 
 MAX_PDF_PAGES = 25
 MIN_USEFUL_PAGE_CHARS = 40
 
@@ -113,21 +113,40 @@ def parse_pdf(pdf_bytes: bytes) -> ParsedPdf:
         )
 
 
-def format_pages_for_llm(parsed: ParsedPdf) -> str:
+def format_pages_for_llm(parsed) -> str:
     return "\n\n".join(
-        f"[PAGE {page.page_number}]\n{page.text}" for page in parsed.pages
+        f"[SLIDE {page.page_number}]\n{page.text}"
+        for page in parsed.pages
     )
 
 
-def verify_deck_quote(parsed: ParsedPdf, page_number: int | None, quote: str | None) -> bool:
-    if type(page_number) is not int or not isinstance(quote, str):
+def verify_deck_quote(
+    parsed,
+    page_number: int | None,
+    quote: str | None,
+) -> bool:
+    if (
+        type(page_number) is not int
+        or not isinstance(quote, str)
+    ):
         return False
-    normalized_quote = normalize_whitespace(quote)
+
+    normalized_quote = normalize_whitespace(
+        quote
+    )
+
     if not normalized_quote:
         return False
+
     for page in parsed.pages:
         if page.page_number == page_number:
-            return normalized_quote in normalize_whitespace(page.text)
+            return (
+                normalized_quote
+                in normalize_whitespace(
+                    page.text
+                )
+            )
+
     return False
 
 
