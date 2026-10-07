@@ -53,6 +53,7 @@ class ScreeningBrief(StrictModel):
     round_target: Fact
     requested_fund_check: Fact
     amount_raised_to_date: Fact
+    historical_r_and_d_raised: Fact
     pre_money: Fact
     use_of_funds: Fact
 
@@ -75,6 +76,7 @@ FACT_FIELDS = (
     "round_target",
     "requested_fund_check",
     "amount_raised_to_date",
+    "historical_r_and_d_raised",
     "pre_money",
     "use_of_funds",
 )
@@ -414,6 +416,21 @@ Do not create unknown placeholder entries inside fact lists.
 If no supported fact is available for a fact list,
 return an empty list.
 
+PRODUCT RULES
+
+For the product field, prefer the explicit branded
+product or platform name when one is provided.
+
+Do not use a tagline, product category, or descriptive
+subtitle as the product value when an explicit product
+name exists.
+
+For example, prefer:
+"AgileRPM®"
+
+over:
+"Enterprise SaaS Platform for Physical Rehabilitation Practice Management"
+
 EVIDENCE QUOTE RULES
 
 Every quote must be copied verbatim from the cited source.
@@ -483,6 +500,23 @@ Keep these fields separate:
 - round_target
 - requested_fund_check
 - amount_raised_to_date
+- historical_r_and_d_raised
+
+amount_raised_to_date means total company capital raised to date.
+
+historical_r_and_d_raised means only an explicitly stated
+historical R&D funding or R&D-raised amount.
+
+Never copy historical R&D funding into amount_raised_to_date
+unless the source explicitly states that it represents
+total capital raised by the company.
+
+If the source states a historical R&D funding amount
+but does not state total capital raised:
+- preserve the R&D amount in historical_r_and_d_raised
+- return amount_raised_to_date as the unknown Fact
+- describe the scope distinction in critical_unknowns
+when it is material to financing diligence
 
 Do not treat a historical funding figure as total capital raised
 unless the source explicitly states that it represents total capital raised.
@@ -566,6 +600,26 @@ For example, prefer an explicit sentence such as:
 over reconstructing the same relationship
 from separated numbers and labels in a table.
 
+For traction facts, value must be the shortest
+verbatim scalar value that represents the metric.
+
+When the metric meaning is already captured by label,
+do not repeat the metric name or change description
+inside value.
+
+Prefer:
+label="ARR", value="$2.1M"
+
+over:
+label="ARR", value="$2.1M ARR"
+
+Prefer:
+label="Admin time reduction per therapist", value="28%"
+
+over:
+label="Admin time reduction per therapist",
+value="28% reduction"
+
 USE OF FUNDS RULES
 
 If use_of_funds is represented as a scalar Fact,
@@ -616,6 +670,7 @@ funding_round
 round_target
 requested_fund_check
 amount_raised_to_date
+historical_r_and_d_raised
 pre_money
 use_of_funds
 traction
@@ -638,10 +693,58 @@ say that it has not been externally verified in this screening step.
 Do not imply that lack of external verification is evidence
 that the company claim is false.
 
+An inference may use factual details contained in
+Fact.value.
+
+Do not introduce an additional factual detail merely
+because it appears elsewhere inside the supporting quote
+if that detail was not returned as a Fact.value.
+
+If a factual detail is important enough to support an
+inference, return it as a validated fact first.
+
 UNKNOWN AND QUESTION RULES
 
 Missing information is a reason to ask a question,
 not evidence of a bad company.
+
+critical_unknowns must contain business or diligence gaps
+that are directly grounded in the supplied sources
+or in the absence of a field explicitly relevant to facts
+already present in the supplied sources.
+
+Do not introduce a specific factual hypothesis, relationship,
+entity type, customer type, financing condition, operating structure,
+or business arrangement unless that concept is explicitly mentioned
+in a validated fact or its source quote.
+
+For example, do not introduce concepts such as:
+- affiliated clinics
+- internal-network revenue
+- related-party customers
+- current round commitments
+- planned runway
+- cash-burn assumptions
+unless the supplied sources explicitly mention them.
+
+When a useful diligence question would otherwise require
+an unsupported hypothesis, ask it neutrally.
+
+For example, prefer:
+"How concentrated is the reported ARR across customers,
+and how many customer organizations account for the 32 deployed clinics?"
+
+Do not write:
+"How much ARR comes from affiliated clinics?"
+unless affiliated clinics are explicitly mentioned in the sources.
+
+Prefer:
+"What assumptions support the company's financing needs
+and expected use of the round?"
+
+Do not write:
+"What cash-burn assumptions support the planned runway?"
+unless runway or cash burn is explicitly mentioned in the sources.
 
 critical_unknowns must contain business or diligence unknowns,
 not parser errors, validation errors, or processing notes.
@@ -654,19 +757,22 @@ Founder questions must address material business,
 financial, commercial, regulatory, or diligence gaps
 supported by the supplied materials.
 
+A founder question may request missing detail,
+but must not imply that a specific condition exists
+unless that condition is explicitly supported by the supplied sources.
+
 Do not create founder questions merely because
 the extraction or validation pipeline had a technical problem.
 
-CONTRADICTION RULES
+RISKS RULE
 
-Only report a contradiction when two supplied source claims
-actually conflict.
+Risks must describe company-specific issues or unresolved
+business, financial, commercial, technical, or regulatory matters
+supported by the supplied sources.
 
-Absence of information is not a contradiction.
-
-A difference in scope is not automatically a contradiction.
-For example, "historical R&D raised" must not be treated
-as conflicting with an unknown total capital raised figure.
+Do not use the general limitation that external verification
+was not performed as a risk.
+That limitation is already disclosed separately in the brief.
 
 OUTPUT LIMITS
 

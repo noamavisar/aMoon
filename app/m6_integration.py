@@ -205,16 +205,16 @@ def render_brief(record):
         ("funding_round", "Funding round"),
         ("round_target", "Total round target"),
         ("requested_fund_check", "Amount requested from this fund"),
-        ("amount_raised_to_date", "Previous fundraising (scope as quoted)"),
+        ("amount_raised_to_date", "Total capital raised to date"),
+        (
+            "historical_r_and_d_raised",
+            "Historical R&D raised",
+        ),
         ("pre_money", "Pre-money valuation"),
         ("use_of_funds", "Use of funds"),
     ]:
         fact(label, brief[key])
 
-    lines.append(
-        "A figure described as historical R&D funding does not establish "
-        "total capital raised to date."
-    )
 
     heading("REPORTED TRACTION")
 

@@ -110,11 +110,6 @@ def prepare_brief(brief, email, parsed):
             if value != quote:
                 value = quote
 
-                notes.append(
-                    "use_of_funds: preserved the full "
-                    "verified allocation breakdown."
-                )
-
         # For other facts, preserve the real source claim instead
         # of an unsupported paraphrase, reformatted amount,
         # or incorrect model value.
